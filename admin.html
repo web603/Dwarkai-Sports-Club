@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Dwarkai Sports Club | Admin Panel</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7LHXFX4T9M"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-7LHXFX4T9M');
+    </script>
+    <!-- End Google tag -->
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Excel Export Library (SheetJS) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#F4F4F4',   
+                        navy: '#1A1D20',      
+                        orange: '#A30000',    
+                        teal: '#FFC107'       
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-primary text-gray-800 font-sans overflow-hidden">
+
+    <!-- Password Protection Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-navy z-[9999] flex justify-center items-center p-4">
+        <div class="bg-white border-t-8 border-orange p-8 md:p-10 rounded-[2rem] shadow-2xl w-full max-w-sm text-center transform transition-all">
+            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border border-gray-200">
+                <i class="fa-solid fa-lock text-orange text-3xl"></i>
+            </div>
+            <h2 class="text-3xl font-black text-navy mb-2">Admin Access</h2>
+            <p class="text-gray-500 font-bold text-sm mb-6">Dwarkai Sports Management</p>
+            
+            <input type="password" id="adminPwd" placeholder="Enter Password" class="w-full bg-gray-50 border-2 border-gray-200 p-4 rounded-xl text-navy font-black outline-none focus:border-orange transition mb-6 text-center tracking-widest text-lg shadow-inner">
+            
+            <button onclick="window.checkAuth()" class="w-full bg-orange text-white py-4 rounded-xl font-black shadow-lg hover:bg-orange/90 hover:scale-105 transition flex items-center justify-center gap-2 text-lg">
+                Unlock Panel <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App Layout -->
+    <div class="flex h-screen w-full">
+        
+        <!-- Desktop Sidebar -->
+        <div class="w-72 bg-navy text-white flex-col shadow-2xl hidden md:flex z-20">
+            <div class="p-8 border-b border-gray-800">
+                <h1 class="text-2xl font-black tracking-widest uppercase flex items-center">
+                    <i class="fa-solid fa-shield-halved text-orange mr-3 text-3xl"></i> Admin
+                </h1>
+            </div>
+            <nav class="flex-1 p-6 space-y-3">
+                <button onclick="window.switchTab('dashboard')" id="nav-dashboard" class="w-full text-left px-6 py-4 rounded-xl font-bold text-lg bg-orange text-white transition shadow-lg flex items-center gap-3">
+                    <i class="fa-solid fa-chart-pie w-6"></i> Dashboard
+                </button>
+                <button onclick="window.switchTab('list')" id="nav-list" class="w-full text-left px-6 py-4 rounded-xl font-bold text-lg text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center gap-3">
+                    <i class="fa-solid fa-list w-6"></i> All Bookings
+                </button>
+                <button onclick="window.switchTab('calendar')" id="nav-calendar" class="w-full text-left px-6 py-4 rounded-xl font-bold text-lg text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center gap-3">
+                    <i class="fa-solid fa-calendar-days w-6"></i> Calendar View
+                </button>
+                <button onclick="window.switchTab('tournaments')" id="nav-tournaments" class="w-full text-left px-6 py-4 rounded-xl font-bold text-lg text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center gap-3">
+                    <i class="fa-solid fa-trophy w-6"></i> Tournaments
+                </button>
+            </nav>
+            <div class="p-6 border-t border-gray-800">
+                <a href="index.html" class="block text-center w-full bg-red-600 text-white py-4 rounded-xl font-black hover:bg-red-700 transition shadow-lg flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-power-off"></i> Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Nav -->
+        <div class="md:hidden fixed bottom-0 left-0 w-full bg-navy text-gray-400 z-[90] safe-bottom flex justify-around items-center text-[10px] font-bold py-2 shadow-[0_-5px_20px_rgba(0,0,0,0.3)] border-t border-gray-800">
+            <button onclick="window.switchTab('dashboard')" id="m-nav-dashboard" class="flex flex-col items-center p-2 text-orange flex-1 transition">
+                <i class="fa-solid fa-chart-pie text-xl mb-1"></i> Dashboard
+            </button>
+            <button onclick="window.switchTab('list')" id="m-nav-list" class="flex flex-col items-center p-2 hover:text-white flex-1 transition">
+                <i class="fa-solid fa-list text-xl mb-1"></i> List
+            </button>
+            <button onclick="window.switchTab('calendar')" id="m-nav-calendar" class="flex flex-col items-center p-2 hover:text-white flex-1 transition">
+                <i class="fa-solid fa-calendar-days text-xl mb-1"></i> Calendar
+            </button>
+            <button onclick="window.switchTab('tournaments')" id="m-nav-tournaments" class="flex flex-col items-center p-2 hover:text-white flex-1 transition">
+                <i class="fa-solid fa-trophy text-xl mb-1"></i> Events
+            </button>
+            <a href="index.html" class="flex flex-col items-center p-2 text-red-400 hover:text-red-500 flex-1 transition">
+                <i class="fa-solid fa-power-off text-xl mb-1"></i> Exit
+            </a>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-10 relative bg-primary safe-pb md:pb-10 custom-scrollbar">
+            
+            <!-- Mobile Header inside Content -->
+            <div class="md:hidden flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-200">
+                <span class="font-black text-navy text-lg flex items-center">
+                    <i class="fa-solid fa-shield-halved text-orange mr-2"></i> DB PANEL
+                </span>
+                <button onclick="window.location.href='index.html'" class="bg-red-100 text-red-600 px-3 py-1 rounded-lg text-xs font-bold"><i class="fa-solid fa-power-off"></i> Exit</button>
+            </div>
+
+            <!-- Tab 1: Dashboard -->
+            <div id="tab-dashboard" class="admin-tab block animation-fade">
+                <div class="flex flex-col md:flex-row justify-between md:items-end mb-6 md:mb-8 border-b-2 border-gray-200 pb-4 gap-4">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-black text-navy">Financial Dashboard</h2>
+                        <p class="text-gray-500 font-bold text-sm md:text-base mt-1">Real-time revenue tracking & management.</p>
+                    </div>
+                    <div class="w-full md:w-auto">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Select Month to View</label>
+                        <input type="month" id="dashMonth" onchange="window.calculateDashboard()" class="w-full md:w-48 bg-white border-2 border-gray-300 p-2 md:p-3 rounded-xl text-navy font-black outline-none focus:border-orange shadow-sm cursor-pointer">
+                    </div>
+                </div>
+                
+                <!-- 2 Source Revenue Boxes (Website & Walk-in Only) -->
+                <div class="grid grid-cols-2 gap-4 mb-8 md:mb-10 max-w-xl">
+                    <div class="bg-white border-b-4 border-teal p-6 rounded-2xl shadow-md text-center hover-lift">
+                        <div class="w-10 h-10 bg-teal/20 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-globe"></i></div>
+                        <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Website</p>
+                        <p id="box-website" class="text-2xl md:text-3xl font-black text-navy mt-1">₹0</p>
+                    </div>
+                    <div class="bg-white border-b-4 border-navy p-6 rounded-2xl shadow-md text-center hover-lift">
+                        <div class="w-10 h-10 bg-navy/10 text-navy rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-person-walking"></i></div>
+                        <p class="text-[10px] md:text-xs text-gray-400 font-black uppercase tracking-widest">Walk-in</p>
+                        <p id="box-walkin" class="text-2xl md:text-3xl font-black text-navy mt-1">₹0</p>
+                    </div>
+                </div>
+
+                <!-- NEAT PROFIT CALCULATOR (3 Columns) -->
+                <div class="bg-white p-6 md:p-10 rounded-[2rem] shadow-xl border border-gray-200 mb-8 md:mb-10">
+                    <h3 class="text-2xl font-black text-navy mb-6 border-b-2 border-gray-100 pb-4 flex items-center">
+                        <div class="w-10 h-10 bg-orange/10 text-orange rounded-full flex items-center justify-center mr-3">
+                            <i class="fa-solid fa-calculator text-xl"></i>
+                        </div>
+                        Monthly Profit Calculator
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                        
+                        <!-- Box 1: Gross Income -->
+                        <div class="bg-gray-50 border-2 border-gray-200 p-6 rounded-2xl flex flex-col justify-center shadow-sm">
+                            <p class="text-gray-500 text-[11px] md:text-xs font-black uppercase tracking-widest mb-2 flex items-center"><i class="fa-solid fa-coins mr-2 text-gray-400"></i> Total Gross Income</p>
+                            <p id="calc-income" class="text-3xl lg:text-4xl font-black text-navy">₹0</p>
+                        </div>
+                        
+                        <!-- Box 2: Expenses -->
+                        <div class="bg-red-50 border-2 border-red-100 p-6 rounded-2xl flex flex-col justify-center shadow-sm">
+                            <p class="text-red-500 text-[11px] md:text-xs font-black uppercase tracking-widest mb-2 flex items-center"><i class="fa-solid fa-money-bill-transfer mr-2 opacity-70"></i> Logged Expenses</p>
+                            <p id="calc-exp" class="text-3xl lg:text-4xl font-black text-red-500">-₹0</p>
+                        </div>
+                        
+                        <!-- Box 3: Net Profit (Highlighted) -->
+                        <div class="bg-navy p-6 rounded-2xl flex flex-col justify-center shadow-xl transform md:scale-105 border-b-4 border-teal relative overflow-hidden z-10">
+                            <div class="absolute top-0 right-0 w-24 h-24 bg-teal/20 rounded-bl-full pointer-events-none"></div>
+                            <p class="text-gray-300 text-[11px] md:text-xs font-black uppercase tracking-widest mb-2 flex items-center"><i class="fa-solid fa-sack-dollar mr-2 text-teal"></i> Final Net Profit</p>
+                            <p id="calc-net" class="text-4xl lg:text-5xl font-black text-white drop-shadow-md">₹0</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Add Expense Form -->
+                <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border border-gray-200 mb-8 max-w-3xl">
+                    <h3 class="text-xl font-black text-navy mb-4 border-b-2 border-gray-100 pb-3">
+                        <i class="fa-solid fa-file-invoice-dollar text-red-600 mr-2"></i> Log Operating Expense
+                    </h3>
+                    <form onsubmit="window.addExpense(event)" class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Description / Category</label>
+                            <input type="text" id="expDesc" placeholder="e.g., Turf Maintenance, Electricity" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-red-400 transition" required>
+                        </div>
+                        <div class="w-full md:w-48">
+                            <label class="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Amount (₹)</label>
+                            <input type="number" id="expAmt" placeholder="0" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-red-400 transition" required>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="submit" class="w-full md:w-auto bg-red-600 text-white py-3 md:py-4 px-6 md:px-8 rounded-xl font-black shadow-lg hover:bg-red-700 transition flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-minus"></i> Deduct
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 2: List View -->
+            <div id="tab-list" class="admin-tab hidden animation-fade">
+                <div class="flex flex-col md:flex-row justify-between md:items-end mb-6 border-b-2 border-gray-200 pb-4 gap-4">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-black text-navy">All Bookings</h2>
+                        <p class="text-gray-500 font-bold text-sm md:text-base mt-1">Chronological list of all generated bookings.</p>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                        <div class="w-full md:w-48">
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Filter by Date</label>
+                            <input type="date" id="listDate" onchange="window.renderList()" class="w-full bg-white border-2 border-gray-300 p-2 md:p-3 rounded-xl text-navy font-black outline-none focus:border-orange shadow-sm cursor-pointer">
+                        </div>
+                        <div class="flex items-end gap-2 w-full md:w-auto">
+                            <!-- EXPORT TO EXCEL BUTTON -->
+                            <button onclick="window.exportToExcel()" class="w-full md:w-auto bg-yellow-500 text-navy px-6 py-2 md:py-3 rounded-xl font-black shadow-lg hover:bg-yellow-600 transition flex items-center justify-center gap-2 h-[42px] md:h-[52px]">
+                                <i class="fa-solid fa-file-excel"></i> Export Excel
+                            </button>
+                            <button onclick="window.openManualModal()" class="w-full md:w-auto bg-orange text-white px-6 py-2 md:py-3 rounded-xl font-black shadow-lg hover:bg-orange/90 transition flex items-center justify-center gap-2 h-[42px] md:h-[52px]">
+                                <i class="fa-solid fa-plus"></i> Manual Book
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] shadow-xl overflow-hidden border border-gray-200">
+                    <div class="overflow-x-auto custom-scrollbar">
+                        <table class="w-full text-left text-sm whitespace-nowrap min-w-[800px]">
+                            <thead class="bg-navy text-white">
+                                <tr>
+                                    <th class="p-4 md:p-6 font-bold uppercase tracking-wider">Date & Time</th>
+                                    <th class="p-4 md:p-6 font-bold uppercase tracking-wider">Customer</th>
+                                    <th class="p-4 md:p-6 font-bold uppercase tracking-wider">Sport</th>
+                                    <th class="p-4 md:p-6 font-bold uppercase tracking-wider">Source</th>
+                                    <th class="p-4 md:p-6 font-bold uppercase tracking-wider">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listBody" class="divide-y divide-gray-100 text-navy font-medium text-sm md:text-base">
+                                <!-- JS Injected Rows -->
+                                <tr><td colspan="5" class="p-10 text-center text-gray-400 font-bold"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3 block"></i> Loading Database...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Calendar View -->
+            <div id="tab-calendar" class="admin-tab hidden animation-fade">
+                <div class="flex flex-col md:flex-row justify-between md:items-end mb-6 border-b-2 border-gray-200 pb-4 gap-4">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-black text-navy">Calendar Grid</h2>
+                        <p class="text-gray-500 font-bold text-sm md:text-base mt-1">View visual occupancy for specific dates.</p>
+                    </div>
+                    <div class="w-full md:w-64">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Select Date to View</label>
+                        <input type="date" id="calDate" class="w-full bg-white border-2 border-gray-300 p-3 rounded-xl text-navy font-black outline-none focus:border-orange shadow-sm cursor-pointer" onchange="window.renderCalendar()">
+                    </div>
+                </div>
+
+                <div id="calGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- JS Injected Cards -->
+                    <div class="col-span-full p-10 text-center text-gray-400 font-bold"><i class="fa-solid fa-calendar-day text-4xl mb-3 block text-gray-300"></i> Select a date to view blocks.</div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Tournaments Maker -->
+            <div id="tab-tournaments" class="admin-tab hidden animation-fade">
+                <div class="mb-6 md:mb-8 border-b-2 border-gray-200 pb-4">
+                    <h2 class="text-3xl md:text-4xl font-black text-navy">Tournament Management</h2>
+                    <p class="text-gray-500 font-bold text-sm md:text-base mt-1">Publish and delete live events from your website.</p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- Form to Add Tournament -->
+                    <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border border-gray-200 self-start">
+                        <h3 class="text-xl font-black text-navy mb-6 border-b-2 border-gray-100 pb-3">
+                            <i class="fa-solid fa-plus-circle text-orange mr-2"></i> Add New Tournament
+                        </h3>
+                        <form onsubmit="window.submitTournament(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Tournament Name</label>
+                                <input type="text" id="tName" placeholder="e.g. Summer Cup 2024" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition" required>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Sport Facility</label>
+                                <input type="text" id="tSport" value="Box Cricket Turf" readonly class="w-full bg-gray-200 border-2 border-gray-300 p-3 md:p-4 rounded-xl text-gray-600 font-bold outline-none cursor-not-allowed">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Prize Pool</label>
+                                    <input type="text" id="tPrize" placeholder="e.g. ₹50,000" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Entry Fee (₹)</label>
+                                    <input type="number" id="tFee" placeholder="2500" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-navy text-white py-4 rounded-xl font-black shadow-lg hover:bg-orange transition flex items-center justify-center gap-2 mt-4">
+                                <i class="fa-solid fa-bullhorn"></i> Publish to Website
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Active Tournaments List -->
+                    <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-xl border border-gray-200">
+                        <h3 class="text-xl font-black text-navy mb-6 border-b-2 border-gray-100 pb-3">
+                            <i class="fa-solid fa-trophy text-yellow-500 mr-2"></i> Live Tournaments
+                        </h3>
+                        <div id="tournamentsList" class="flex flex-col gap-4 max-h-[500px] overflow-y-auto custom-scrollbar pr-2">
+                            <!-- JS Injected List -->
+                            <div class="text-center text-gray-400 font-bold py-10"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3 block"></i> Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Add Manual Booking Modal -->
+    <div id="manualModal" class="fixed inset-0 bg-navy/90 z-[999] hidden flex justify-center items-center p-4 backdrop-blur-sm safe-pb">
+        <div class="bg-white border-t-8 border-orange p-6 md:p-8 rounded-[2rem] w-full max-w-2xl shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="document.getElementById('manualModal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl transition"><i class="fa-solid fa-times"></i></button>
+            
+            <h3 class="text-2xl md:text-3xl font-black text-navy mb-6 border-b border-gray-100 pb-4"><i class="fa-solid fa-file-invoice text-orange mr-2"></i> Add Booking</h3>
+            
+            <form onsubmit="window.submitManual(event)" class="space-y-4 md:space-y-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Customer Name</label>
+                        <input type="text" id="mName" placeholder="Full Name or Team Name" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Sport Facility</label>
+                        <input type="text" id="mSport" value="Box Cricket Turf" readonly class="w-full bg-gray-200 border-2 border-gray-300 p-3 md:p-4 rounded-xl text-gray-600 font-bold outline-none cursor-not-allowed">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Date</label>
+                        <input type="date" id="mDate" onchange="window.renderAdminSlots()" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Source</label>
+                        <select id="mSource" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition">
+                            <option value="Walk-in">Walk-in</option>
+                            <option value="Website">Website</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Interactive Slot Grid -->
+                <div class="border-t border-b border-gray-200 py-4 my-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2 flex justify-between items-center">
+                        Select Packages / Time Slots
+                    </label>
+                    <div id="adminSlotGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2 max-h-48 overflow-y-auto custom-scrollbar p-3 bg-gray-50 border-2 border-gray-200 rounded-xl">
+                        <!-- JS Injected Slots -->
+                        <div class="col-span-full text-center text-gray-400 text-xs font-bold py-4">Please select a Date above to view availability.</div>
+                    </div>
+                    <p id="adminSlotError" class="text-red-500 text-xs font-bold mt-2 hidden"><i class="fa-solid fa-circle-exclamation"></i> Please select at least one package or time slot.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 flex justify-between">
+                        <span>Total Value (₹)</span>
+                        <span class="text-[10px] text-yellow-600">(Auto-calculated based on slots, you can override)</span>
+                    </label>
+                    <input type="number" id="mPrice" placeholder="Final Amount Charged" class="w-full bg-gray-50 border-2 border-gray-200 p-3 md:p-4 rounded-xl text-navy font-bold outline-none focus:border-orange transition" required>
+                </div>
+
+                <button type="submit" class="w-full bg-navy text-white py-4 rounded-xl font-black text-lg hover:bg-orange transition shadow-xl mt-4 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-save"></i> Save Booking to DB
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase Script Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Dwarkai Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDK0m8DCyUUJpDmMpCMpmADFQ1DDRXZlOM",
+            authDomain: "dwarkai-sports-club.firebaseapp.com",
+            projectId: "dwarkai-sports-club",
+            storageBucket: "dwarkai-sports-club.firebasestorage.app",
+            messagingSenderId: "754862578986",
+            appId: "1:754862578986:web:640a5db776ee2391891253",
+            measurementId: "G-7LHXFX4T9M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // State Arrays
+        let allBookings = [];
+        let allExpenses = [];
+        let allTournaments = [];
+        let adminSelectedSlots = []; 
+
+        // Auth Logic - Updated to new password
+        window.checkAuth = () => {
+            const pwd = document.getElementById('adminPwd').value;
+            if (pwd === "Dwarkai@123") {
+                document.getElementById('loginOverlay').remove();
+                document.body.classList.remove('overflow-hidden');
+                
+                const todayStr = new Date().toISOString().split("T")[0];
+                const monthStr = todayStr.substring(0, 7); 
+                
+                document.getElementById('calDate').value = todayStr;
+                document.getElementById('dashMonth').value = monthStr;
+                document.getElementById('listDate').value = todayStr;
+                
+                window.fetchAdminData();
+            } else { 
+                alert("Access Denied. Incorrect Password."); 
+                document.getElementById('adminPwd').value = '';
+            }
+        };
+
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.admin-tab').forEach(el => {
+                el.classList.remove('block');
+                el.classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('block');
+            
+            document.querySelectorAll('nav button').forEach(el => {
+                el.classList.remove('bg-orange', 'text-white', 'shadow-lg');
+                el.classList.add('text-gray-400');
+            });
+            const btn = document.getElementById(`nav-${tabId}`);
+            if(btn) {
+                btn.classList.remove('text-gray-400');
+                btn.classList.add('bg-orange', 'text-white', 'shadow-lg');
+            }
+
+            document.querySelectorAll('#m-nav-dashboard, #m-nav-list, #m-nav-calendar, #m-nav-tournaments').forEach(el => {
+                el.classList.remove('text-orange');
+            });
+            const mBtn = document.getElementById(`m-nav-${tabId}`);
+            if(mBtn) mBtn.classList.add('text-orange');
+
+            if (tabId === 'calendar') window.renderCalendar();
+            if (tabId === 'list') window.renderList();
+            if (tabId === 'tournaments') window.renderTournaments();
+        };
+
+        window.fetchAdminData = async () => {
+            try {
+                const bSnap = await getDocs(query(collection(db, "bookings")));
+                allBookings = [];
+                bSnap.forEach(doc => allBookings.push({id: doc.id, ...doc.data()}));
+
+                const eSnap = await getDocs(query(collection(db, "expenses")));
+                allExpenses = [];
+                eSnap.forEach(doc => allExpenses.push({id: doc.id, ...doc.data()}));
+
+                const tSnap = await getDocs(query(collection(db, "tournaments")));
+                allTournaments = [];
+                tSnap.forEach(doc => allTournaments.push({id: doc.id, ...doc.data()}));
+
+                window.calculateDashboard();
+                if(!document.getElementById('tab-list').classList.contains('hidden')) window.renderList();
+                if(!document.getElementById('tab-calendar').classList.contains('hidden')) window.renderCalendar();
+                if(!document.getElementById('tab-tournaments').classList.contains('hidden')) window.renderTournaments();
+                
+            } catch(e) { 
+                console.error("Data Fetch Error:", e);
+                alert("Failed to sync with live database. Check internet connection.");
+            }
+        };
+
+        window.calculateDashboard = () => {
+            const selectedMonth = document.getElementById('dashMonth').value; 
+            
+            let filteredBookings = allBookings;
+            let filteredExpenses = allExpenses;
+
+            if (selectedMonth) {
+                filteredBookings = allBookings.filter(b => b.date && b.date.startsWith(selectedMonth));
+                filteredExpenses = allExpenses.filter(e => {
+                    let eDate = e.date || "";
+                    if (!eDate && e.createdAt && e.createdAt.seconds) {
+                        eDate = new Date(e.createdAt.seconds * 1000).toISOString().split("T")[0];
+                    }
+                    return eDate.startsWith(selectedMonth);
+                });
+            }
+
+            let srcMap = { 'Website': 0, 'Walk-in': 0 };
+            let gross = 0;
+            
+            filteredBookings.forEach(b => {
+                const val = Number(b.price) || 0;
+                gross += val;
+                if(srcMap[b.source] !== undefined) {
+                    srcMap[b.source] += val;
+                } else {
+                    srcMap['Walk-in'] += val; // Fallback to walk-in if old data contains third party
+                }
+            });
+
+            document.getElementById('box-website').innerText = `₹${srcMap['Website'].toLocaleString()}`;
+            document.getElementById('box-walkin').innerText = `₹${srcMap['Walk-in'].toLocaleString()}`;
+            
+            const totalExp = filteredExpenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+            const netProfit = gross - totalExp;
+
+            document.getElementById('calc-income').innerText = `₹${gross.toLocaleString()}`;
+            document.getElementById('calc-exp').innerText = `-₹${totalExp.toLocaleString()}`;
+            
+            const netEl = document.getElementById('calc-net');
+            netEl.innerText = `₹${netProfit.toLocaleString()}`;
+        };
+
+        window.renderList = () => {
+            const tbody = document.getElementById('listBody');
+            tbody.innerHTML = '';
+            
+            const selectedDate = document.getElementById('listDate').value;
+            let listToRender = allBookings;
+
+            if (selectedDate) {
+                listToRender = allBookings.filter(b => b.date === selectedDate);
+            }
+            
+            if(listToRender.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-400 font-bold"><i class="fa-solid fa-folder-open text-4xl mb-3 block text-gray-200"></i> No bookings found.</td></tr>`;
+                return;
+            }
+
+            const sorted = [...listToRender].sort((a,b) => (b.date || "").localeCompare(a.date || ""));
+            
+            sorted.forEach(b => {
+                let badgeClass = "bg-gray-100 text-gray-700";
+                if(b.source === 'Website') badgeClass = "bg-teal/20 text-yellow-700";
+                if(b.source === 'Walk-in') badgeClass = "bg-blue-100 text-blue-700";
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-gray-50 border-b border-gray-100 transition">
+                        <td class="p-4 md:p-6">
+                            <span class="block font-black text-navy text-sm md:text-base">${b.date}</span>
+                            <span class="text-[10px] md:text-xs text-gray-500 font-bold block max-w-[200px] whitespace-normal mt-1 leading-snug">${b.timeSlot}</span>
+                        </td>
+                        <td class="p-4 md:p-6">
+                            <span class="block font-black text-navy">${b.name}</span>
+                            <span class="text-[10px] md:text-xs text-gray-500 font-bold">${b.phone || 'N/A'}</span>
+                        </td>
+                        <td class="p-4 md:p-6 font-bold text-gray-700">${b.sport}</td>
+                        <td class="p-4 md:p-6">
+                            <span class="${badgeClass} px-3 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest">${b.source}</span>
+                        </td>
+                        <td class="p-4 md:p-6 font-black text-orange text-base md:text-lg">₹${b.price}</td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.exportToExcel = () => {
+            const selectedDate = document.getElementById('listDate').value;
+            let listToExport = allBookings;
+
+            if (selectedDate) {
+                listToExport = allBookings.filter(b => b.date === selectedDate);
+            }
+
+            if (listToExport.length === 0) {
+                alert("No data available to export for the selected filters.");
+                return;
+            }
+
+            const excelData = listToExport.map(b => ({
+                "Date": b.date,
+                "Time Slots": b.timeSlot,
+                "Customer Name": b.name,
+                "Phone": b.phone || "N/A",
+                "Sport Facility": b.sport,
+                "Source": b.source,
+                "Revenue (INR)": b.price
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Bookings");
+
+            const filename = selectedDate ? `Dwarkai_Bookings_${selectedDate}.xlsx` : `Dwarkai_All_Bookings.xlsx`;
+            XLSX.writeFile(workbook, filename);
+        };
+
+        window.renderCalendar = () => {
+            const dateStr = document.getElementById('calDate').value;
+            const grid = document.getElementById('calGrid');
+            grid.innerHTML = '';
+
+            if(!dateStr) {
+                grid.innerHTML = `<div class="col-span-full p-10 text-center text-gray-400 font-bold">Please select a date above.</div>`;
+                return;
+            }
+
+            const dayBooks = allBookings.filter(b => b.date === dateStr);
+            // Locked to just Box Cricket Turf
+            const sports = ['Box Cricket Turf'];
+            
+            sports.forEach(sp => {
+                const rowBooks = dayBooks.filter(b => b.sport === sp);
+                
+                let html = `
+                <div class="bg-white border border-gray-200 p-6 rounded-3xl shadow-lg hover-lift">
+                    <h4 class="font-black text-navy text-lg mb-4 border-b-2 border-gray-100 pb-2 flex items-center justify-between">
+                        ${sp} <span class="bg-navy text-white text-[10px] px-2 py-1 rounded-full">${rowBooks.length} blocks</span>
+                    </h4>
+                    <div class="flex flex-col gap-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">`;
+                
+                if(rowBooks.length === 0) {
+                    html += `<div class="bg-gray-50 p-4 rounded-xl text-center text-gray-400 font-bold text-sm border border-dashed border-gray-300">Free All Day</div>`;
+                } else {
+                    rowBooks.forEach(rb => {
+                        let sourceBadgeColor = rb.source === 'Website' ? 'text-teal' : 'text-orange';
+                        html += `
+                        <div class="bg-gray-50 border border-gray-200 p-3 rounded-xl">
+                            <p class="font-black text-navy text-sm mb-1">${rb.timeSlot}</p>
+                            <p class="text-xs text-gray-600 font-semibold mb-1"><i class="fa-solid fa-user text-gray-400 mr-1"></i> ${rb.name}</p>
+                            <p class="text-[10px] font-black uppercase tracking-widest ${sourceBadgeColor}"><i class="fa-solid fa-tag mr-1"></i> ${rb.source}</p>
+                        </div>`;
+                    });
+                }
+                html += `</div></div>`;
+                grid.innerHTML += html;
+            });
+        };
+
+        window.renderTournaments = () => {
+            const container = document.getElementById('tournamentsList');
+            container.innerHTML = '';
+            
+            if(allTournaments.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-400 font-bold py-10 border-2 border-dashed border-gray-200 rounded-xl">No active tournaments published.</div>`;
+                return;
+            }
+
+            allTournaments.forEach(t => {
+                container.innerHTML += `
+                <div class="bg-gray-50 border border-gray-200 p-4 md:p-5 rounded-2xl flex justify-between items-center shadow-sm hover-lift">
+                    <div>
+                        <h4 class="font-black text-navy text-base md:text-lg">${t.name}</h4>
+                        <div class="text-[10px] md:text-xs text-gray-500 font-bold mt-1 flex flex-wrap gap-2">
+                            <span class="bg-white border border-gray-200 px-2 py-1 rounded shadow-sm"><i class="fa-solid fa-medal text-orange mr-1"></i>${t.sport}</span>
+                            <span class="bg-white border border-gray-200 px-2 py-1 rounded shadow-sm"><i class="fa-solid fa-trophy text-teal mr-1"></i>${t.prize}</span>
+                            <span class="bg-white border border-gray-200 px-2 py-1 rounded shadow-sm"><i class="fa-solid fa-ticket text-navy mr-1"></i>₹${t.fee} Entry</span>
+                        </div>
+                    </div>
+                    <button onclick="window.deleteTournament('${t.id}')" class="bg-red-50 text-red-500 border border-red-200 w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center hover:bg-red-500 hover:text-white hover:border-red-500 transition shadow-sm shrink-0 ml-2">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+                `;
+            });
+        };
+
+        window.submitTournament = async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Publishing...`;
+            btn.disabled = true;
+
+            const payload = {
+                name: document.getElementById('tName').value,
+                sport: "Box Cricket Turf",
+                prize: document.getElementById('tPrize').value,
+                fee: Number(document.getElementById('tFee').value),
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "tournaments"), payload);
+                alert("Tournament Published Successfully!");
+                e.target.reset();
+                window.fetchAdminData();
+            } catch(err) {
+                alert("Error publishing tournament.");
+            }
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        };
+
+        window.deleteTournament = async (docId) => {
+            if(confirm("Are you sure you want to permanently delete this tournament? It will be removed from the website.")) {
+                try {
+                    await deleteDoc(doc(db, "tournaments", docId));
+                    window.fetchAdminData();
+                } catch(e) {
+                    alert("Failed to delete tournament. Check connection.");
+                }
+            }
+        };
+
+        function formatTime(h) {
+            const ampm = h >= 12 ? 'PM' : 'AM'; 
+            let hr = h % 12; 
+            if (hr === 0) hr = 12;
+            return `${hr < 10 ? '0'+hr : hr}:00 ${ampm}`;
+        }
+
+        // --- NEW UPDATED ADMIN SLOT GENERATOR FOR DAY PACKAGES AND HOURLY ---
+        window.renderAdminSlots = () => {
+            const dateVal = document.getElementById('mDate').value;
+            const grid = document.getElementById('adminSlotGrid');
+            
+            adminSelectedSlots = []; 
+            document.getElementById('mPrice').value = ''; 
+            document.getElementById('adminSlotError').classList.add('hidden');
+
+            if (!dateVal) {
+                grid.innerHTML = `<div class="col-span-full text-center text-gray-400 text-xs font-bold py-4">Please select a Date above to view availability.</div>`;
+                return;
+            }
+
+            grid.innerHTML = '';
+            const dateBooks = allBookings.filter(b => b.date === dateVal);
+
+            // Logic matching the frontend
+            let isFullBooked = dateBooks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 6:00 PM"));
+            let isMornBooked = dateBooks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 12:00 PM"));
+            let isEveBooked = dateBooks.some(b => b.timeSlot && b.timeSlot.includes("1:00 PM - 6:00 PM"));
+
+            const packages = [
+                { time: "7:00 AM - 6:00 PM", price: 8000, type: "full", blocked: isFullBooked || isMornBooked || isEveBooked, title: "Full Day" },
+                { time: "7:00 AM - 12:00 PM", price: 4000, type: "half_morn", blocked: isFullBooked || isMornBooked, title: "Half Day (Morning)" },
+                { time: "1:00 PM - 6:00 PM", price: 4000, type: "half_eve", blocked: isFullBooked || isEveBooked, title: "Half Day (Evening)" }
+            ];
+
+            // Render Packages
+            grid.innerHTML += `<div class="col-span-full mt-2 mb-1"><h4 class="font-bold text-navy text-xs uppercase border-b border-gray-200 pb-1">Day Packages</h4></div>`;
+            
+            packages.forEach(pkg => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = pkg.blocked 
+                    ? 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-gray-200 text-gray-400 cursor-not-allowed line-through col-span-full sm:col-span-2 min-h-[60px]'
+                    : 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm col-span-full sm:col-span-2 min-h-[60px]';
+                
+                btn.innerHTML = `<span class="text-[10px] text-orange mb-1 uppercase tracking-widest">${pkg.title}</span> <span>${pkg.time}</span> <span class="text-gray-500 font-black mt-1">₹${pkg.price}</span>`;
+                btn.disabled = pkg.blocked;
+                
+                if (!pkg.blocked) {
+                    btn.onclick = () => {
+                        const isSelected = adminSelectedSlots.some(s => s.time === pkg.time);
+                        
+                        if (!isSelected) {
+                            if (pkg.type === 'full' && adminSelectedSlots.some(s => s.type === 'half_morn' || s.type === 'half_eve')) {
+                                alert("Cannot select Full Day while a Half Day is selected."); return;
+                            }
+                            if ((pkg.type === 'half_morn' || pkg.type === 'half_eve') && adminSelectedSlots.some(s => s.type === 'full')) {
+                                alert("Cannot select Half Day while Full Day is selected."); return;
+                            }
+                        }
+
+                        if (isSelected) {
+                            adminSelectedSlots = adminSelectedSlots.filter(s => s.time !== pkg.time);
+                            btn.classList.replace('bg-navy', 'bg-white');
+                            btn.classList.replace('text-white', 'text-navy');
+                            btn.classList.replace('border-navy', 'border-gray-200');
+                        } else {
+                            adminSelectedSlots.push(pkg);
+                            btn.classList.replace('bg-white', 'bg-navy');
+                            btn.classList.replace('text-navy', 'text-white');
+                            btn.classList.replace('border-gray-200', 'border-navy');
+                        }
+                        updateAdminPrice();
+                    };
+                }
+                grid.appendChild(btn);
+            });
+
+            // Render Hourly Night Slots
+            grid.innerHTML += `<div class="col-span-full mt-4 mb-1"><h4 class="font-bold text-navy text-xs uppercase border-b border-gray-200 pb-1">Night Slots (Hourly)</h4></div>`;
+
+            for(let i = 19; i < 24; i++) {
+                let timeLabel = `${formatTime(i)} - ${formatTime(i+1)}`;
+                let isBlocked = dateBooks.some(b => b.timeSlot && b.timeSlot.includes(timeLabel));
+                
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = isBlocked 
+                    ? 'p-2 text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-gray-200 text-gray-400 cursor-not-allowed line-through min-h-[60px] flex flex-col justify-center items-center'
+                    : 'p-2 text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm min-h-[60px] flex flex-col justify-center items-center';
+                
+                btn.innerHTML = `<span>${timeLabel}</span> <span class="text-gray-500 font-black mt-1">₹2500</span>`;
+                btn.disabled = isBlocked;
+                
+                if (!isBlocked) {
+                    btn.onclick = () => {
+                        const isSelected = adminSelectedSlots.some(s => s.time === timeLabel);
+                        if (isSelected) {
+                            adminSelectedSlots = adminSelectedSlots.filter(s => s.time !== timeLabel);
+                            btn.classList.replace('bg-navy', 'bg-white');
+                            btn.classList.replace('text-white', 'text-navy');
+                            btn.classList.replace('border-navy', 'border-gray-200');
+                        } else {
+                            adminSelectedSlots.push({time: timeLabel, price: 2500, type: 'hourly'});
+                            btn.classList.replace('bg-white', 'bg-navy');
+                            btn.classList.replace('text-navy', 'text-white');
+                            btn.classList.replace('border-gray-200', 'border-navy');
+                        }
+                        updateAdminPrice();
+                    };
+                }
+                grid.appendChild(btn);
+            }
+        };
+
+        function updateAdminPrice() {
+            let tot = adminSelectedSlots.reduce((sum, slot) => sum + slot.price, 0);
+            document.getElementById('mPrice').value = tot || '';
+            document.getElementById('adminSlotError').classList.add('hidden');
+        }
+
+        window.openManualModal = () => {
+            document.getElementById('manualModal').classList.remove('hidden');
+            const today = new Date().toISOString().split("T")[0];
+            document.getElementById('mDate').value = today;
+            window.renderAdminSlots(); 
+        };
+
+        window.submitManual = async (e) => {
+            e.preventDefault();
+            
+            if (adminSelectedSlots.length === 0) {
+                document.getElementById('adminSlotError').classList.remove('hidden');
+                return;
+            }
+
+            const btn = e.submitter;
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
+            btn.disabled = true;
+
+            // Sort times to keep them sequential and format as string for db match
+            const combinedTimes = adminSelectedSlots.map(s => s.time).sort((a,b) => a.localeCompare(b)).join(', ');
+
+            const payload = {
+                name: document.getElementById('mName').value,
+                phone: "N/A", 
+                date: document.getElementById('mDate').value,
+                source: document.getElementById('mSource').value,
+                sport: "Box Cricket Turf",
+                timeSlot: combinedTimes, 
+                price: Number(document.getElementById('mPrice').value),
+                createdAt: serverTimestamp()
+            };
+            
+            try {
+                await addDoc(collection(db, "bookings"), payload);
+                alert("Manual Booking Successfully Recorded!");
+                document.getElementById('manualModal').classList.add('hidden');
+                e.target.reset();
+                window.fetchAdminData(); 
+            } catch(err) { 
+                alert("Error saving. Please check your internet connection."); 
+                console.error(err);
+            }
+            
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        };
+
+        window.addExpense = async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
+            btn.disabled = true;
+
+            const todayStr = new Date().toISOString().split("T")[0];
+
+            const payload = {
+                description: document.getElementById('expDesc').value,
+                amount: Number(document.getElementById('expAmt').value),
+                date: todayStr,
+                createdAt: serverTimestamp()
+            };
+            
+            try {
+                await addDoc(collection(db, "expenses"), payload);
+                alert("Expense deducted. Profit calculator updated.");
+                e.target.reset();
+                window.fetchAdminData(); 
+            } catch(err) { 
+                alert("Error logging expense."); 
+            }
+            
+            btn.innerHTML = orig;
+            btn.disabled = false;
+        };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Dwarkai Sports Club | Jalgaon's Best Box Cricket Turf</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-7LHXFX4T9M"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-7LHXFX4T9M');
+    </script>
+    <!-- End Google tag -->
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init("YOUR_EMAILJS_PUBLIC_KEY"); // Optional: Replace with actual key if using EmailJS
+       })();
+    </script>
+
+    <!-- Tailwind CSS with Custom Premium Palette -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FFFFFF',     /* Base Canvas */
+                        navy: '#1A1D20',        /* Structure / Charcoal Typography */
+                        orange: '#A30000',      /* Dominant Cherry Red Action Accent */
+                        teal: '#FFC107',        /* Supporting Gold Accent */
+                        muted: '#E9ECEF'        /* Soft gray border dividers */
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Custom CSS Overrides for Premium Micro-Interactions -->
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FFFFFF;
+            color: #1A1D20;
+        }
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Montserrat', sans-serif;
+        }
+        .hover-lift {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 35px -5px rgba(26, 29, 32, 0.08), 0 10px 15px -8px rgba(26, 29, 32, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #E9ECEF;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #A30000;
+            border-radius: 9999px;
+        }
+        .active-main-card {
+            border-color: #A30000 !important;
+            box-shadow: 0 12px 30px -5px rgba(163, 0, 0, 0.15);
+        }
+        
+        /* Marquee Scrolling CSS */
+        .marquee-wrapper {
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+            padding: 1rem 0;
+        }
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: scrollMarquee 25s linear infinite;
+        }
+        .marquee-content {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0 0.75rem;
+        }
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+        @keyframes scrollMarquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Slots Status */
+        .slot-booked {
+            background-color: #E9ECEF !important;
+            color: #9CA3AF !important;
+            cursor: not-allowed;
+            border: 1px solid #D1D5DB;
+        }
+        .slot-selected {
+            background-color: #A30000 !important;
+            color: #FFFFFF !important;
+            border-color: #A30000 !important;
+            box-shadow: 0 10px 15px -3px rgba(163, 0, 0, 0.3);
+            transform: scale(1.05);
+            transition: all 0.2s ease;
+        }
+    </style>
+</head>
+<body class="text-[#1A1D20] pb-20 md:pb-0 bg-white">
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 bg-[#1A1D20] z-[9999] flex flex-col items-center justify-center transition-opacity duration-500">
+        <!-- Replaced rounded-full with rounded-2xl to maintain square logo shape perfectly -->
+        <div id="p-logo" class="w-24 h-24 md:w-32 md:h-32 bg-black rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(163,0,0,0.6)] p-2 mb-4 border-4 border-orange opacity-0 scale-50 relative z-10 overflow-hidden">
+            <img src="logo.png" alt="Dwarkai Sports Logo" class="w-full h-full object-contain">
+        </div>
+        
+        <h2 id="p-text" class="text-white font-black tracking-widest uppercase text-3xl md:text-5xl drop-shadow-2xl opacity-0 scale-50 relative z-10 text-center mt-2">
+            Dwarkai<br><span class="text-teal text-xl md:text-3xl">Sports Club</span>
+        </h2>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-muted transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center md:justify-between items-center h-16 md:h-20">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                <!-- Replaced rounded-full with rounded-xl for square logo structure -->
+                <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center shadow-md bg-black border-2 border-orange overflow-hidden shrink-0 p-1">
+                    <img src="logo.png" alt="Dwarkai Sports" class="w-full h-full object-contain">
+                </div>
+                <span class="font-black text-xl md:text-2xl text-navy uppercase tracking-wider hidden sm:block">Dwarkai Sports</span>
+            </div>
+            
+            <div class="hidden md:flex space-x-8 font-semibold text-navy items-center">
+                <a href="#about" class="hover:text-orange transition">About Us</a>
+                <a href="#gallery" class="hover:text-orange transition">Gallery</a>
+                <a href="#booking" class="hover:text-orange transition">Bookings</a>
+                <a href="#academy" class="hover:text-orange transition">Academy</a>
+                <a href="#contact" class="hover:text-orange transition">Contact</a>
+                <a href="#booking" class="px-8 py-3 rounded-full font-bold shadow-lg text-white bg-orange hover:bg-orange/90 transition-colors">
+                    Book a Slot
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <div class="md:hidden fixed bottom-0 left-0 w-full bg-white/95 backdrop-blur-lg shadow-[0_-10px_20px_rgba(0,0,0,0.05)] z-[90] safe-bottom rounded-t-3xl border-t border-muted flex justify-between items-center px-2 pt-2 pb-1">
+        <a href="#about" class="flex flex-col items-center p-2 text-gray-500 hover:text-orange flex-1 transition">
+            <i class="fa-solid fa-circle-info text-xl mb-1"></i><span class="text-[10px] font-bold">About</span>
+        </a>
+        <a href="#gallery" class="flex flex-col items-center p-2 text-gray-500 hover:text-orange flex-1 transition">
+            <i class="fa-solid fa-images text-xl mb-1"></i><span class="text-[10px] font-bold">Gallery</span>
+        </a>
+        <a href="#booking" class="relative -top-6 flex flex-col items-center justify-center bg-orange text-white w-16 h-16 rounded-full shadow-[0_8px_20px_rgba(163,0,0,0.4)] border-4 border-white flex-shrink-0 hover:scale-105 transition">
+            <i class="fa-solid fa-calendar-plus text-2xl"></i>
+        </a>
+        <a href="#academy" class="flex flex-col items-center p-2 text-gray-500 hover:text-orange flex-1 transition">
+            <i class="fa-solid fa-trophy text-xl mb-1"></i><span class="text-[10px] font-bold">Events</span>
+        </a>
+        <a href="#contact" class="flex flex-col items-center p-2 text-gray-500 hover:text-orange flex-1 transition">
+            <i class="fa-solid fa-phone text-xl mb-1"></i><span class="text-[10px] font-bold">Contact</span>
+        </a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative h-[85vh] md:h-screen flex items-center justify-center overflow-hidden">
+        <!-- Premium Turf Night Background Image -->
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?q=80&w=1600&auto=format&fit=crop')] bg-cover bg-center parallax-hero scale-100 origin-center"></div>
+        <div class="absolute inset-0 bg-navy/80 z-10"></div>
+        
+        <div class="relative z-20 text-center px-4 max-w-5xl mt-10 md:mt-0">
+            <div class="hero-reveal inline-block bg-orange text-white px-4 py-2 rounded-full text-xs md:text-sm font-bold mb-4 md:mb-6 tracking-widest shadow-lg uppercase">
+                Premium Box Cricket in Jalgaon
+            </div>
+            <h1 class="hero-reveal text-4xl md:text-6xl lg:text-7xl font-black text-white mb-4 md:mb-6 leading-tight drop-shadow-xl">
+                Jalgaon's Best Turf.<br>
+                <span class="text-teal font-heading">Your Best Game.</span>
+            </h1>
+            <p class="hero-reveal text-base md:text-xl lg:text-2xl text-gray-200 mb-8 md:mb-12 font-light px-2 max-w-3xl mx-auto">
+                Experience a Professional Grade surface for Box Cricket. Perfect lighting, unmatched energy, and a community built around the sport.
+            </p>
+            <div class="hero-reveal mt-8">
+                <a href="#booking" class="px-8 py-4 md:px-10 md:py-5 rounded-full font-black text-center text-lg md:text-xl shadow-2xl hover:scale-105 transition inline-flex items-center gap-3 text-white bg-orange hover:bg-orange/95">
+                    <i class="fa-solid fa-calendar-check text-2xl"></i> View Packages & Book Now
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="py-16 md:py-24 bg-white relative overflow-hidden border-b border-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+                
+                <div class="relative gs-slide-left z-10">
+                    <img src="https://images.unsplash.com/photo-1518605368461-1e1c75b879c5?q=80&w=1000&auto=format&fit=crop" alt="Cricket Turf" class="rounded-3xl shadow-2xl border-l-8 border-orange object-cover h-[350px] md:h-[500px] w-full">
+                    <div class="absolute -bottom-6 -right-4 md:-bottom-8 md:-right-8 bg-navy text-white p-4 md:p-8 rounded-2xl shadow-xl border-b-4 border-orange hover-lift">
+                        <p class="text-3xl md:text-5xl font-black text-white mb-1">1,000+</p>
+                        <p class="text-[10px] md:text-sm font-bold uppercase tracking-widest text-teal">Matches Played</p>
+                    </div>
+                </div>
+
+                <div class="gs-slide-right z-10">
+                    <h2 class="text-3xl md:text-5xl font-black text-navy mb-4 md:mb-6 leading-tight">
+                        Built by Athletes,<br>
+                        <span class="text-orange font-heading">For Athletes.</span>
+                    </h2>
+                    
+                    <div class="space-y-6 text-sm md:text-lg text-gray-600 leading-relaxed font-medium">
+                        <p>
+                            Welcome to <strong>Dwarkai Sports Club</strong>, Jalgaon’s premier destination for Box Cricket. Located conveniently behind Mahadev Nagar Kanalda Road (Near Bypass Highway NH 53, Gath No 468), our turf is designed to elevate your cricketing experience to professional levels.
+                        </p>
+                        <p>
+                            We feature top-tier synthetic turf that provides excellent cushioning for joint protection, combined with high-lumen LED floodlights that perfectly mimic daylight for night matches. Our facility includes clean restrooms, hygienic changing rooms, and ample secure parking for all visitors.
+                        </p>
+                        <p>
+                            Whether you're hosting a competitive local tournament, practicing with your academy, or just blowing off steam in a weekend match with friends, Dwarkai Sports Club guarantees a flawless, high-energy environment.
+                        </p>
+                    </div>
+
+                    <a href="#contact" class="inline-flex items-center gap-3 mt-8 text-orange font-black text-lg hover:text-navy transition">
+                        Contact us for Support <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scrolling Gallery Section -->
+    <section id="gallery" class="py-16 md:py-24 bg-[#F8F9FA] relative border-b border-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-10 gs-reveal">
+            <h2 class="text-3xl md:text-5xl font-black text-navy mb-4">Our Turf in Action</h2>
+            <p class="text-gray-500 font-semibold text-sm md:text-lg">Glimpses of matches, tournaments, and events.</p>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 gs-slide-up">
+                <!-- Visible Images -->
+                <div class="overflow-hidden rounded-2xl shadow-lg h-64 group">
+                    <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-lg h-64 group">
+                    <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-lg h-64 group hidden sm:block">
+                    <img src="https://images.unsplash.com/photo-1624526267942-ab0f0b580098?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                
+                <!-- Hidden Images (Revealed on 'View More') -->
+                <div class="overflow-hidden rounded-2xl shadow-lg h-64 group hidden gallery-extra">
+                    <img src="https://images.unsplash.com/photo-1518605368461-1e1c75b879c5?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-lg h-64 group hidden gallery-extra">
+                    <img src="https://images.unsplash.com/photo-1593341646782-e0be7e1713d2?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+                <div class="overflow-hidden rounded-2xl shadow-lg h-64 group hidden gallery-extra">
+                    <img src="https://images.unsplash.com/photo-1587280501635-68a0e82cd5ff?q=80&w=800&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                </div>
+            </div>
+
+            <div class="text-center mt-10">
+                <button id="viewMoreBtn" onclick="toggleGallery()" class="px-8 py-3 rounded-full font-bold shadow-md text-navy bg-white border-2 border-muted hover:border-orange hover:text-orange transition-colors">
+                    View More Photos <i class="fa-solid fa-angle-down ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Booking Engine -->
+    <section id="booking" class="py-16 md:py-24 bg-white relative z-20 border-b border-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <div class="text-center mb-6 md:mb-8 gs-reveal">
+                <h2 class="text-3xl md:text-5xl font-black text-navy mb-3 md:mb-4">Book Your Slot. Own the Pitch.</h2>
+                <p class="text-gray-500 font-semibold mb-6 md:mb-8 text-sm md:text-lg">Select from our Day Packages or book Night Hourly Slots below!</p>
+            </div>
+
+            <div class="flex flex-col lg:flex-row gap-8 md:gap-12">
+                
+                <!-- Left: Booking Grid -->
+                <div class="w-full lg:w-2/3 bg-[#F8F9FA] p-4 md:p-10 rounded-[2rem] shadow-2xl gs-slide-up border border-muted">
+                    
+                    <!-- Selected Sport Info -->
+                    <div class="flex items-center gap-4 bg-white p-4 rounded-2xl border border-orange mb-6 shadow-sm">
+                        <div class="w-14 h-14 bg-orange/10 rounded-xl flex items-center justify-center text-orange text-2xl shrink-0">
+                            <i class="fa-solid fa-baseball-bat-ball"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-black text-navy text-lg">Box Cricket Turf</h3>
+                            <p class="text-xs text-gray-500 font-bold">Standard Dimensions | High-Lumen Lighting</p>
+                        </div>
+                    </div>
+
+                    <!-- Date Picker -->
+                    <div class="mb-6 md:mb-10">
+                        <label class="block text-navy font-black mb-2 md:mb-3 text-lg md:text-xl"><i class="fa-solid fa-calendar-days text-orange mr-2"></i> Select Date</label>
+                        <input type="date" id="bookDate" class="w-full p-4 md:p-5 rounded-xl border-2 border-muted focus:outline-none focus:border-orange font-bold text-navy text-base md:text-lg bg-white shadow-sm transition" onchange="generateSlots()">
+                    </div>
+
+                    <!-- Slots Container -->
+                    <div>
+                        <label class="block text-navy font-black mb-4 flex flex-col sm:flex-row justify-between sm:items-center text-base md:text-xl gap-2">
+                            <span><i class="fa-solid fa-clock text-orange mr-2"></i> Select Package / Slot</span>
+                            <span class="text-[10px] md:text-sm font-bold text-gray-500 bg-white border border-muted px-3 py-1 rounded-full w-max"><i class="fa-solid fa-square text-gray-400"></i> Gray = Booked</span>
+                        </label>
+                        
+                        <div id="slotContainer" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
+                            <div class="col-span-full text-center text-gray-500 bg-white p-6 md:p-8 rounded-xl border-2 border-dashed border-muted">
+                                <i class="fa-solid fa-calendar-check text-3xl md:text-4xl mb-3 text-gray-300"></i><br>
+                                <span class="text-sm md:text-base">Please select a date above to view availability.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Summary Card -->
+                <div class="w-full lg:w-1/3">
+                    <div class="sticky top-24 bg-white border-2 border-muted p-6 md:p-10 rounded-[2rem] shadow-2xl gs-slide-left">
+                        <h3 class="text-2xl md:text-3xl font-black text-navy border-b-2 border-muted pb-3 md:pb-4 mb-6 md:mb-8">Booking Summary</h3>
+                        
+                        <div class="flex items-center gap-4 mb-6 md:mb-8">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gray-50 border border-muted shadow-sm flex items-center justify-center text-orange text-2xl md:text-4xl shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <p id="sumSport" class="font-black text-navy text-lg md:text-xl mb-1">Cricket</p>
+                                <p class="text-xs md:text-sm text-gray-500 font-bold">Dwarkai Sports, Jalgaon</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4 text-sm md:text-base font-bold text-navy mb-8 md:mb-10">
+                            <div class="flex justify-between border-b border-muted pb-3">
+                                <span>Date:</span> 
+                                <span id="sumDate" class="text-orange text-right">Not selected</span>
+                            </div>
+                            <div class="flex flex-col border-b border-muted pb-3">
+                                <span class="mb-2">Selected Slots:</span>
+                                <span id="sumTime" class="text-orange text-xs md:text-sm space-y-2 block max-h-32 overflow-y-auto pr-2 custom-scrollbar">None</span>
+                            </div>
+                            
+                            <!-- PAYMENT SUMMARY DISPLAY -->
+                            <div class="flex justify-between text-xl md:text-2xl pt-2 mt-2 border-t border-muted">
+                                <span>Total Value:</span> 
+                                <span id="sumPrice" class="text-navy font-black">₹0</span>
+                            </div>
+                            <div class="flex justify-between text-base md:text-lg pt-2 mt-2 text-gray-500">
+                                <span class="text-sm md:text-base">Min. Advance (25%):</span> 
+                                <span id="sumAdvance" class="font-bold">₹0</span>
+                            </div>
+                            <p class="text-[10px] md:text-xs text-orange mt-1 text-right font-bold">* You can pay full or 25% advance.</p>
+                        </div>
+
+                        <form id="bookingForm" onsubmit="submitBooking(event)">
+                            <div class="relative mb-4">
+                                <i class="fa-solid fa-user absolute left-4 top-4 text-gray-400"></i>
+                                <input type="text" id="bookName" placeholder="Your Full Name" class="w-full pl-12 p-3 md:p-4 border border-muted rounded-xl focus:outline-none focus:border-orange font-bold transition text-sm md:text-base bg-[#F8F9FA]" required>
+                            </div>
+                            <div class="relative mb-4">
+                                <i class="fa-solid fa-phone absolute left-4 top-4 text-gray-400"></i>
+                                <input type="tel" id="bookPhone" placeholder="Phone Number" class="w-full pl-12 p-3 md:p-4 border border-muted rounded-xl focus:outline-none focus:border-orange font-bold transition text-sm md:text-base bg-[#F8F9FA]" required>
+                            </div>
+                            <div class="relative mb-6 md:mb-8">
+                                <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-400"></i>
+                                <input type="email" id="bookEmail" placeholder="Your Email Address" class="w-full pl-12 p-3 md:p-4 border border-muted rounded-xl focus:outline-none focus:border-orange font-bold transition text-sm md:text-base bg-[#F8F9FA]" required>
+                            </div>
+                            <button type="submit" id="submitBtn" class="w-full px-8 py-4 md:py-5 rounded-xl font-black text-lg md:text-xl shadow-xl flex justify-center items-center gap-3 text-white bg-orange hover:bg-orange/95">
+                                <i class="fa-solid fa-lock"></i> Secure My Slot
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tournaments & Academy -->
+    <section id="academy" class="py-16 md:py-24 bg-navy text-white relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 relative z-10 text-white">
+            <div class="text-center mb-10 md:mb-16 gs-reveal">
+                <h2 class="text-4xl md:text-5xl font-black mb-3 md:mb-4">Tournaments & Academy</h2>
+                <p class="text-base md:text-xl text-gray-300 font-light">Compete for glory, or learn from certified professionals.</p>
+            </div>
+
+            <!-- Academy Layout -->
+            <div class="flex flex-col lg:flex-row gap-8 items-stretch mt-10 gs-slide-up text-white">
+                <div class="w-full lg:w-2/3 flex flex-col md:flex-row gap-6">
+                    <div class="w-full md:w-1/3 bg-[#243447] border border-white/10 p-6 rounded-[2rem] shadow-xl flex flex-col items-center justify-center text-center">
+                        <i class="fa-solid fa-child-reaching text-5xl text-teal mb-4"></i>
+                        <h4 class="text-2xl font-heading font-black text-white mb-2">Age Group</h4>
+                        <p class="text-gray-300 font-bold text-sm">Boys & Girls<br>Ages 4 to 16</p>
+                    </div>
+                    <div class="w-full md:w-2/3 bg-[#111e2f] border border-white/5 p-6 rounded-[2rem] shadow-2xl flex flex-col items-center text-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-orange/10 rounded-bl-full pointer-events-none"></div>
+                        
+                        <h3 class="text-3xl md:text-5xl font-black text-white mb-2">Dwarkai Sports<br>Academy</h3>
+                        <p class="text-teal font-bold text-sm mb-6">All Batches: 5:00 PM – 7:00 PM | Ages 4-16</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
+                            <div class="bg-[#243447] p-3 rounded-xl border border-white/10 flex flex-col items-center justify-center">
+                                <h4 class="font-black text-teal text-sm leading-tight">MWF<br>Batch</h4>
+                                <p class="text-[10px] text-gray-300 mt-1">Mon, Wed, Fri</p>
+                            </div>
+                            <div class="bg-[#243447] p-3 rounded-xl border border-white/10 flex flex-col items-center justify-center">
+                                <h4 class="font-black text-teal text-sm leading-tight">TTS<br>Batch</h4>
+                                <p class="text-[10px] text-gray-300 mt-1">Tue, Thu, Sat</p>
+                            </div>
+                            <div class="bg-[#243447] p-3 rounded-xl border border-white/10 flex flex-col items-center justify-center">
+                                <h4 class="font-black text-teal text-sm leading-tight">Daily<br>(M-F)</h4>
+                                <p class="text-[10px] text-gray-300 mt-1">Mon to Fri</p>
+                            </div>
+                            <div class="bg-[#243447] p-3 rounded-xl border border-white/10 flex flex-col items-center justify-center">
+                                <h4 class="font-black text-teal text-sm leading-tight">Full<br>Week</h4>
+                                <p class="text-[10px] text-gray-300 mt-1">Mon to Sat</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-1/3 bg-white p-6 rounded-[2rem] shadow-2xl text-navy flex flex-col border border-muted">
+                    <h3 class="text-2xl font-black text-navy mb-4 text-center border-b-2 border-muted pb-2">Academy Inquiry</h3>
+                    <form onsubmit="submitAcademyInquiry(event)" class="space-y-3 flex-1 flex flex-col">
+                        <div>
+                            <input type="text" id="acName" placeholder="Parent / Guardian Name" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required>
+                        </div>
+                        <div>
+                            <input type="tel" id="acPhone" placeholder="Phone Number" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <input type="number" id="acAge" placeholder="Age (4-16)" min="4" max="16" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required>
+                            <input type="text" id="acSport" value="Cricket" readonly class="w-full bg-gray-200 border border-muted p-3 rounded-xl text-sm font-bold outline-none text-navy cursor-not-allowed">
+                        </div>
+                        <button type="submit" class="w-full text-white py-3 rounded-xl font-black text-base shadow-xl mt-auto bg-orange hover:bg-orange/95">
+                            Send Inquiry <i class="fa-solid fa-paper-plane ml-2"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reviews Section -->
+    <section class="py-16 bg-[#F8F9FA] relative overflow-hidden border-b border-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 border-b-2 border-muted pb-6 gs-reveal">
+                <div>
+                    <h2 class="text-4xl md:text-5xl font-black text-navy mb-2">Player Stories</h2>
+                    <div class="flex items-center gap-4">
+                        <div class="text-5xl font-black text-orange drop-shadow-md">4.4<span class="text-3xl text-gray-400">/5</span></div>
+                        <div>
+                            <div class="text-teal text-lg mb-1">
+                                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+                            </div>
+                            <p class="text-xs font-bold text-navy uppercase tracking-widest"><i class="fa-brands fa-google mr-1"></i> Verified Reviews</p>
+                        </div>
+                    </div>
+                </div>
+                <a href="https://www.google.com/search?sca_esv=1eed3fc2a4e4618d&rlz=1C1CHBD_enIN1161IN1161&sxsrf=ANbL-n52LOAXLyv-YPOtPcNSrW9D_AITUQ:1781087617361&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qObe097EflSz4BfCblAWpe0uV6xF42HLp9IGTGH1QIEEuhH8qjPedI-kHfouJCBMI_ECyJaXp86txxtb6JApcfGjaQTQw81jQYn7gUr6vhXTG-phOxg%3D%3D&q=Dwarkai+Sports+Club+Reviews&sa=X&ved=2ahUKEwiAm_y1vPyUAxUNRWcHHY13BicQ0bkNegQINhAF&biw=1280&bih=585&dpr=1.5#lrd=0x3bd90f82ccb05103:0xd116c0aea40aebe3,3,,,," target="_blank" class="w-full md:w-auto mt-4 md:mt-0 text-center border-2 border-navy text-navy hover:bg-navy hover:text-white transition px-6 py-3 rounded-full font-black shadow-sm bg-white">
+                    Write a Review
+                </a>
+            </div>
+        </div>
+
+        <div class="marquee-wrapper mt-4 gs-reveal">
+            <div class="marquee-track">
+                <!-- Group 1 -->
+                <div class="marquee-content">
+                    <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-orange flex flex-col hover-lift h-[230px] shrink-0">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-navy flex items-center justify-center text-white font-black text-lg">RD</div>
+                            <div>
+                                <h4 class="font-black text-navy">Rahul D.</h4>
+                                <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"The lighting here is phenomenal. Playing Box Cricket at night feels exactly like a day match. Highly recommend Dwarkai Sports!"</p>
+                    </div>
+                    <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-navy flex flex-col hover-lift h-[230px] shrink-0">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-navy font-black text-lg">AS</div>
+                            <div>
+                                <h4 class="font-black text-navy">Amit S.</h4>
+                                <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"Turf quality is amazing. Very easy booking process online and the staff is super cooperative in Jalgaon. Will visit again."</p>
+                    </div>
+                    <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-teal flex flex-col hover-lift h-[230px] shrink-0">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-navy flex items-center justify-center text-white font-black text-lg">VK</div>
+                            <div>
+                                <h4 class="font-black text-navy">Vikas K.</h4>
+                                <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"Amazing facility! Clean, energetic, and highly recommended for local tournaments and daily matches."</p>
+                    </div>
+                </div>
+                <!-- Group 2 (Duplicate for Seamless Loop) -->
+                <div class="marquee-content" aria-hidden="true">
+                    <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-orange flex flex-col hover-lift h-[230px] shrink-0">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-navy flex items-center justify-center text-white font-black text-lg">RD</div>
+                            <div>
+                                <h4 class="font-black text-navy">Rahul D.</h4>
+                                <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"The lighting here is phenomenal. Playing Box Cricket at night feels exactly like a day match. Highly recommend Dwarkai Sports!"</p>
+                    </div>
+                    <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-navy flex flex-col hover-lift h-[230px] shrink-0">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-navy font-black text-lg">AS</div>
+                            <div>
+                                <h4 class="font-black text-navy">Amit S.</h4>
+                                <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"Turf quality is amazing. Very easy booking process online and the staff is super cooperative in Jalgaon. Will visit again."</p>
+                    </div>
+                    <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-teal flex flex-col hover-lift h-[230px] shrink-0">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-navy flex items-center justify-center text-white font-black text-lg">VK</div>
+                            <div>
+                                <h4 class="font-black text-navy">Vikas K.</h4>
+                                <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"Amazing facility! Clean, energetic, and highly recommended for local tournaments and daily matches."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Us -->
+    <section id="contact" class="py-16 md:py-24 bg-white relative border-b border-muted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col lg:flex-row shadow-2xl rounded-3xl overflow-hidden gs-reveal bg-white border border-muted">
+                
+                <div class="w-full lg:w-2/5 bg-navy text-white p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 md:w-48 h-32 md:h-48 bg-orange/10 rounded-bl-full pointer-events-none"></div>
+                    <h3 class="text-3xl font-black mb-6 relative z-10">Let's Talk</h3>
+                    <div class="space-y-6 mb-10 relative z-10">
+                        <div class="flex items-start gap-4">
+                            <i class="fa-solid fa-location-dot text-orange text-2xl shrink-0"></i>
+                            <div>
+                                <a href="https://maps.app.goo.gl/MVDbJDUjwQj7PebZA" target="_blank" class="font-bold text-lg mb-1 hover:text-orange transition block">Dwarkai Sports Club</a>
+                                <p class="text-gray-300 text-sm leading-relaxed">Behind Mahadev Nagar Kanalda Road, Near By Pass Highway, NH 53, Gath No 468, Jalgaon</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fa-solid fa-phone text-orange text-xl shrink-0"></i>
+                            <div>
+                                <a href="tel:9423150409" class="block text-xl font-black hover:text-orange transition">+91 94231 50409</a>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/919423150409" target="_blank" class="relative z-10 w-full block text-center bg-[#25D366] text-white py-4 rounded-xl font-black text-lg hover:bg-[#1ebe5d] transition shadow-2xl hover-lift">
+                        <i class="fa-brands fa-whatsapp mr-2 text-xl"></i> Chat on WhatsApp
+                    </a>
+                </div>
+
+                <div class="w-full lg:w-3/5 p-8 relative bg-white">
+                    <h3 class="text-2xl font-black text-navy mb-6 border-b-4 border-orange pb-2 inline-block">Send an Inquiry</h3>
+                    <form id="contactForm" onsubmit="submitContact(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <input type="text" id="c_name" placeholder="Full Name" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent text-navy" required>
+                            <input type="tel" id="c_phone" placeholder="Phone Number" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent text-navy" required>
+                        </div>
+                        <select id="c_subject" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent cursor-pointer text-navy">
+                            <option>Bulk Booking Inquiry</option>
+                            <option>Tournament Entry</option>
+                            <option>Academy Details</option>
+                            <option>Other</option>
+                        </select>
+                        <textarea id="c_message" placeholder="Message" rows="2" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent resize-none text-navy" required></textarea>
+                        <button type="submit" id="contactBtn" class="w-full md:w-auto px-8 py-3 rounded-xl font-black text-lg shadow-xl text-white bg-orange hover:bg-orange/95 transition">
+                            Send Message <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map -->
+    <div class="w-full h-[300px] md:h-[400px] grayscale hover:grayscale-0 transition duration-700 gs-reveal border-b border-muted">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7836102146955!2d75.54015697500135!3d21.00130668064117!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd90f82ccb05103%3A0xd116c0aea40aebe3!2sDwarkai%20Sports%20Club!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-navy pt-16 pb-8 text-gray-300 relative border-t-4 border-orange">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid md:grid-cols-3 gap-10 border-b border-gray-800 pb-10 mb-8 text-center md:text-left">
+                <div>
+                    <span class="font-black text-2xl text-white uppercase tracking-wider mb-4 flex items-center justify-center md:justify-start">
+                        <!-- Square Logo Footer -->
+                        <img src="logo.png" alt="Dwarkai Logo" class="h-10 w-10 mr-3 bg-black rounded-lg p-1 border border-orange object-contain"> Dwarkai Sports
+                    </span>
+                    <p class="text-sm mb-6 font-medium text-gray-400">Jalgaon's premier Box Cricket destination. Professional turf, high-energy vibes, and a community built around the love for the game.</p>
+                </div>
+                <div class="hidden md:block">
+                    <h4 class="text-white font-black text-lg mb-4 uppercase tracking-widest border-l-4 border-orange pl-3">Quick Links</h4>
+                    <ul class="space-y-3 font-bold text-sm text-gray-400">
+                        <li><a href="#about" class="hover:text-orange transition">About Us</a></li>
+                        <li><a href="#gallery" class="hover:text-orange transition">Gallery</a></li>
+                        <li><a href="#booking" class="hover:text-orange transition">Book a Slot</a></li>
+                        <li><a href="#academy" class="hover:text-orange transition">Academy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-black text-lg mb-4 uppercase tracking-widest border-l-4 border-orange pl-3">Connect</h4>
+                    <a href="tel:9423150409" class="block text-2xl font-black text-white hover:text-orange transition mb-1">94231 50409</a>
+                    <p class="text-sm mb-6 font-medium text-gray-400"><i class="fa-solid fa-location-dot text-orange mr-2"></i> NH 53, Jalgaon</p>
+                    <a href="admin.html" class="inline-block border border-gray-600 text-xs font-bold px-4 py-2 rounded-xl hover:bg-orange hover:border-orange transition text-white">
+                        <i class="fa-solid fa-lock mr-2"></i> Admin Login
+                    </a>
+                </div>
+            </div>
+            <div class="text-center md:text-left text-xs text-gray-500 flex flex-col md:flex-row justify-between items-center gap-4 font-semibold pb-[env(safe-area-inset-bottom)] md:pb-0">
+                <div>
+                    <p>Copyright © 2024 Dwarkai Sports Club.</p>
+                </div>
+                <p class="flex items-center"><i class="fa-solid fa-shield-halved text-teal mr-2 text-base"></i> Secure Online Booking</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK Logic & Integrations -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDK0m8DCyUUJpDmMpCMpmADFQ1DDRXZlOM",
+            authDomain: "dwarkai-sports-club.firebaseapp.com",
+            projectId: "dwarkai-sports-club",
+            storageBucket: "dwarkai-sports-club.firebasestorage.app",
+            messagingSenderId: "754862578986",
+            appId: "1:754862578986:web:640a5db776ee2391891253",
+            measurementId: "G-7LHXFX4T9M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let currentSport = 'Cricket'; 
+        let selectedDate = '';
+        let selectedSlotsArray = [];
+        let pendingBookingPayload = null;
+
+        window.currentPaymentTotal = 0;
+        window.currentPaymentAdvance = 0;
+
+        // Custom Time Formatter to handle Wrap around (12 AM to 6 AM)
+        function formatTime(h) {
+            let wrapped = h % 24;
+            const ampm = wrapped >= 12 ? 'PM' : 'AM'; 
+            let hr = wrapped % 12; 
+            if (hr === 0) hr = 12;
+            return `${hr < 10 ? '0'+hr : hr}:00 ${ampm}`;
+        }
+
+        window.toggleGallery = () => {
+            const extraImages = document.querySelectorAll('.gallery-extra');
+            const btn = document.getElementById('viewMoreBtn');
+            
+            let isHidden = false;
+            extraImages.forEach(img => {
+                if (img.classList.contains('hidden')) {
+                    img.classList.remove('hidden');
+                    isHidden = true;
+                } else {
+                    img.classList.add('hidden');
+                }
+            });
+
+            if (isHidden) {
+                btn.innerHTML = `View Less <i class="fa-solid fa-angle-up ml-2"></i>`;
+            } else {
+                btn.innerHTML = `View More Photos <i class="fa-solid fa-angle-down ml-2"></i>`;
+                document.getElementById('gallery').scrollIntoView({behavior: 'smooth'});
+            }
+            ScrollTrigger.refresh();
+        };
+
+        window.generateSlots = async () => {
+            const dateInput = document.getElementById('bookDate').value;
+            if (!dateInput) return;
+            
+            selectedDate = dateInput; 
+            document.getElementById('sumDate').innerText = selectedDate;
+            selectedSlotsArray = []; 
+            window.updateSummaryUI();
+            
+            const container = document.getElementById('slotContainer');
+            
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col justify-center items-center py-10">
+                    <i class="fa-solid fa-baseball-bat-ball animate-custom-bounce text-orange text-5xl mb-4"></i>
+                    <div class="w-8 h-2 bg-gray-200 rounded-full animate-pulse"></div>
+                    <span class="font-bold text-gray-500 mt-4 animate-pulse">Checking Availability...</span>
+                </div>
+            `;
+
+            try {
+                const q = query(collection(db, "bookings"), where("date", "==", selectedDate));
+                const querySnapshot = await getDocs(q);
+                let blocks = [];
+                querySnapshot.forEach((doc) => { blocks.push(doc.data()); });
+
+                container.innerHTML = ''; 
+
+                // Database Conflict Checking logic
+                let isFullBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 6:00 PM"));
+                let isMornBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 12:00 PM"));
+                let isEveBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("1:00 PM - 6:00 PM"));
+
+                // ==== DAY PACKAGES ====
+                const dayHeader = document.createElement('div');
+                dayHeader.className = "col-span-full mt-2 mb-2";
+                dayHeader.innerHTML = `<h4 class="font-black text-navy text-lg border-b-2 border-orange inline-block pb-1">Day Packages</h4>`;
+                container.appendChild(dayHeader);
+
+                // 1. Full Day (7am-6pm)
+                let fullBlocked = isFullBooked || isMornBooked || isEveBooked;
+                createSlotCard("7:00 AM - 6:00 PM", 8000, container, fullBlocked, "full", "Full Day");
+
+                // 2. Half Day Morning (7am-12pm)
+                let mornBlocked = isFullBooked || isMornBooked;
+                createSlotCard("7:00 AM - 12:00 PM", 4000, container, mornBlocked, "half_morn", "Half Day (Morning)");
+
+                // 3. Half Day Evening (1pm-6pm)
+                let eveBlocked = isFullBooked || isEveBooked;
+                createSlotCard("1:00 PM - 6:00 PM", 4000, container, eveBlocked, "half_eve", "Half Day (Evening)");
+
+
+                // ==== NIGHT SLOTS ====
+                const nightHeader = document.createElement('div');
+                nightHeader.className = "col-span-full mt-6 mb-2";
+                nightHeader.innerHTML = `<h4 class="font-black text-navy text-lg border-b-2 border-orange inline-block pb-1">Night Slots (Hourly)</h4>`;
+                container.appendChild(nightHeader);
+
+                // 7 PM (19) through to 6 AM the next day (30)
+                // 19->7PM, 29->5AM (ends at 6AM)
+                for(let i = 19; i < 30; i++) {
+                    let timeLabel = `${formatTime(i)} - ${formatTime(i+1)}`;
+                    let isBlocked = blocks.some(b => b.timeSlot && b.timeSlot.includes(timeLabel));
+                    createSlotCard(timeLabel, 2500, container, isBlocked, "hourly", "Hourly Slot");
+                }
+
+            } catch(e) {
+                console.error("Error fetching slots", e);
+                container.innerHTML = `<div class="col-span-full text-center text-red-500 font-bold">Failed to load slots. Please refresh the page.</div>`;
+            }
+        };
+
+        function createSlotCard(timeStr, price, container, isBlocked, type, title) {
+            const div = document.createElement('div');
+            
+            // Dynamic column sizing (Day packages take full width or 2 cols on tablet)
+            let colClass = type === 'hourly' ? '' : 'col-span-full sm:col-span-2 md:col-span-full lg:col-span-2';
+            
+            div.className = `slot-card p-3 md:p-4 rounded-xl text-center flex flex-col justify-center items-center h-20 md:h-24 border-2 border-muted bg-white shadow-sm transition ${colClass} ${isBlocked ? 'slot-booked' : 'cursor-pointer hover:border-orange'}`;
+            
+            let titleHtml = type !== 'hourly' ? `<span class="text-orange font-black text-[10px] md:text-xs uppercase tracking-widest mb-1">${title}</span>` : '';
+            
+            div.innerHTML = `${titleHtml}<span class="font-black text-xs md:text-sm mb-1 text-navy">${timeStr}</span><span class="text-[10px] md:text-xs font-bold text-gray-500">₹${price}</span>`;
+            
+            if (!isBlocked) {
+                div.onclick = () => {
+                    const isSelected = selectedSlotsArray.some(s => s.time === timeStr);
+                    
+                    // Intelligent UI Conflict Check logic
+                    if (!isSelected) {
+                        if (type === 'full' && selectedSlotsArray.some(s => s.type === 'half_morn' || s.type === 'half_eve')) {
+                            alert("You cannot select a Full Day while a Half Day is already selected. Please deselect it first."); return;
+                        }
+                        if ((type === 'half_morn' || type === 'half_eve') && selectedSlotsArray.some(s => s.type === 'full')) {
+                            alert("You cannot select a Half Day while the Full Day is already selected. Please deselect it first."); return;
+                        }
+                    }
+
+                    if (isSelected) { 
+                        const idx = selectedSlotsArray.findIndex(s => s.time === timeStr);
+                        selectedSlotsArray.splice(idx, 1); 
+                        div.classList.remove('slot-selected'); 
+                    } else { 
+                        selectedSlotsArray.push({time: timeStr, price: price, type: type}); 
+                        div.classList.add('slot-selected'); 
+                    }
+                    window.updateSummaryUI();
+                };
+            }
+            container.appendChild(div);
+        }
+
+        window.updateSummaryUI = () => {
+            const timeContainer = document.getElementById('sumTime'); 
+            const priceContainer = document.getElementById('sumPrice');
+            const advanceContainer = document.getElementById('sumAdvance');
+            
+            if (selectedSlotsArray.length === 0) { 
+                timeContainer.innerHTML = "None"; 
+                priceContainer.innerHTML = "₹0"; 
+                advanceContainer.innerHTML = "₹0"; 
+                return; 
+            }
+            
+            selectedSlotsArray.sort((a,b) => a.time.localeCompare(b.time));
+            
+            let html = ''; 
+            let tot = 0;
+            selectedSlotsArray.forEach(s => { 
+                html += `<span class="bg-orange/10 px-2 py-1 rounded inline-block mb-1 w-full border border-orange/20 text-navy text-xs md:text-sm font-bold">${s.time} <span class="float-right font-black">₹${s.price}</span></span>`; 
+                tot += s.price; 
+            });
+            
+            timeContainer.innerHTML = html; 
+            priceContainer.innerHTML = `₹${tot}`;
+            // Advance calculated to 25%
+            advanceContainer.innerHTML = `₹${Math.round(tot * 0.25)}`;
+        };
+
+        window.updateUPI = (type) => {
+            const amtToPay = type === 'full' ? window.currentPaymentTotal : window.currentPaymentAdvance;
+            document.getElementById('displayPayAmount').innerText = `₹${amtToPay}`;
+            
+            const merchantUpiId = "9423150409@ybl"; 
+            const merchantName = "Dwarkai Sports";
+            const upiString = `upi://pay?pa=${merchantUpiId}&pn=${encodeURIComponent(merchantName)}&am=${amtToPay}&cu=INR&tn=Turf Booking ${selectedDate}`;
+            
+            document.getElementById('upiQrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+            
+            const appLink = document.getElementById('upiAppLink');
+            if(appLink) appLink.href = upiString;
+
+            pendingBookingPayload.amountPaid = amtToPay;
+            pendingBookingPayload.paymentType = type;
+        };
+
+        window.submitBooking = async (e) => {
+            e.preventDefault();
+            if (selectedSlotsArray.length === 0) return alert('Please select at least one package or slot.');
+
+            const btn = document.getElementById('submitBtn'); 
+            const orig = btn.innerHTML; 
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating Payment...`; 
+            btn.disabled = true;
+
+            const combinedTimes = selectedSlotsArray.map(s => s.time).join(', ');
+            const totalAmt = selectedSlotsArray.reduce((acc, curr) => acc + curr.price, 0);
+            
+            // Advance calculated at 25%
+            const advanceAmt = Math.round(totalAmt * 0.25);
+
+            window.currentPaymentTotal = totalAmt;
+            window.currentPaymentAdvance = advanceAmt;
+
+            pendingBookingPayload = { 
+                name: document.getElementById('bookName').value, 
+                phone: document.getElementById('bookPhone').value, 
+                email: document.getElementById('bookEmail').value, 
+                sport: currentSport, 
+                date: selectedDate, 
+                timeSlot: combinedTimes, 
+                price: totalAmt, 
+                source: 'Website',
+                createdAt: serverTimestamp()
+            };
+
+            const paymentModal = document.createElement('div');
+            paymentModal.id = "upiPaymentModal";
+            paymentModal.className = "fixed inset-0 bg-navy/95 z-[9999] flex justify-center items-center backdrop-blur-sm p-4 safe-pb";
+            paymentModal.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 md:p-8 w-[95%] md:max-w-md text-center shadow-2xl relative border-t-8 border-orange flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar text-navy">
+                    <button onclick="document.getElementById('upiPaymentModal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl"><i class="fa-solid fa-times"></i></button>
+                    
+                    <h2 class="text-2xl font-black text-navy mb-2">Complete Payment</h2>
+                    <p class="text-gray-500 font-bold mb-4">Total Booking Value: ₹${totalAmt}</p>
+                    
+                    <div class="bg-gray-50 p-3 rounded-xl border border-muted mb-4 flex justify-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-navy">
+                            <input type="radio" name="payOption" value="advance" checked onchange="window.updateUPI('advance')" class="w-4 h-4 accent-orange">
+                            Pay 25% (₹${advanceAmt})
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer font-bold text-sm text-navy">
+                            <input type="radio" name="payOption" value="full" onchange="window.updateUPI('full')" class="w-4 h-4 accent-orange">
+                            Pay Full (₹${totalAmt})
+                        </label>
+                    </div>
+
+                    <p class="text-navy font-black mb-4 text-lg border-b-2 border-muted pb-4">Amount to Pay Now: <br>
+                        <span class="text-orange text-3xl mt-2 block" id="displayPayAmount">₹${advanceAmt}</span>
+                    </p>
+                    
+                    <div class="hidden md:block mb-4">
+                        <p class="text-xs font-bold text-navy mb-3 uppercase tracking-widest">Scan to Pay via any UPI App</p>
+                        <img id="upiQrImage" src="" alt="UPI QR Code" class="mx-auto border-4 border-muted rounded-xl shadow-sm">
+                    </div>
+                    
+                    <div class="block md:hidden mb-4">
+                        <a id="upiAppLink" href="#" class="block w-full bg-navy text-white py-4 rounded-xl font-black text-base hover:bg-orange transition shadow-xl flex justify-center items-center gap-3">
+                            <i class="fa-solid fa-mobile-screen"></i> Pay via App
+                        </a>
+                    </div>
+                    
+                    <button onclick="window.confirmWhatsApp()" class="w-full bg-[#25D366] text-white py-3 rounded-xl font-black text-base hover:bg-[#1ebe5d] transition shadow-xl flex justify-center items-center gap-3 mt-auto">
+                        <i class="fa-brands fa-whatsapp text-xl"></i> I Paid, Send Screenshot
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(paymentModal);
+            
+            window.updateUPI('advance');
+
+            btn.innerHTML = orig; 
+            btn.disabled = false; 
+        };
+
+        window.confirmWhatsApp = async () => {
+            if (!pendingBookingPayload) return;
+            try {
+                await addDoc(collection(db, "bookings"), pendingBookingPayload);
+                const total = pendingBookingPayload.price;
+                const amountPaid = pendingBookingPayload.amountPaid;
+                const pending = total - amountPaid;
+
+                try {
+                    emailjs.send("YOUR_SERVICE_ID", "YOUR_OWNER_TEMPLATE_ID", {
+                        to_name: "Admin",
+                        from_name: pendingBookingPayload.name,
+                        user_email: pendingBookingPayload.email,
+                        user_phone: pendingBookingPayload.phone,
+                        sport: pendingBookingPayload.sport,
+                        date: pendingBookingPayload.date,
+                        time: pendingBookingPayload.timeSlot,
+                        total: total,
+                        advance: amountPaid
+                    });
+                } catch(err) { console.warn("EmailJS Status", err); }
+
+                const paymentLabel = pendingBookingPayload.paymentType === 'full' ? 'Full Payment' : '25% Advance';
+                const waMsg = `*Payment Done! Confirm My Slot* ✅%0A%0A*Name:* ${pendingBookingPayload.name}%0A*Date:* ${pendingBookingPayload.date}%0A*Slots:* ${pendingBookingPayload.timeSlot}%0A%0A*Total Booking Value:* ₹${total}%0A*Amount Paid:* ₹${amountPaid} (${paymentLabel})%0A*Pending (Pay at Venue):* ₹${pending}%0A%0A[Please attach your payment screenshot here]`;
+                
+                window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                
+                document.getElementById('upiPaymentModal').remove();
+                document.getElementById('bookingForm').reset();
+                window.generateSlots(); 
+                pendingBookingPayload = null;
+            } catch(e) {
+                alert("Failed to process booking on our end. Please try again.");
+            }
+        };
+
+        window.submitAcademyInquiry = async (e) => {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('acName').value,
+                phone: document.getElementById('acPhone').value,
+                age: document.getElementById('acAge').value,
+                sport: "Cricket", 
+                createdAt: serverTimestamp()
+            };
+            try {
+                await addDoc(collection(db, "academy_inquiries"), payload);
+                const waMsg = `*Academy Admission Inquiry* 🎓%0A%0A*Parent Name:* ${payload.name}%0A*Phone:* ${payload.phone}%0A*Child Age:* ${payload.age}%0A*Sport:* ${payload.sport}`;
+                window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                e.target.reset();
+            } catch(err) { alert("Error sending inquiry."); }
+        };
+
+        window.submitContact = async (e) => {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('c_name').value,
+                phone: document.getElementById('c_phone').value,
+                subject: document.getElementById('c_subject').value,
+                message: document.getElementById('c_message').value,
+                createdAt: serverTimestamp()
+            };
+            try {
+                await addDoc(collection(db, "contact_inquiries"), payload);
+                const waMsg = `Hello Dwarkai Sports!%0A%0A*Name:* ${payload.name}%0A*Phone:* ${payload.phone}%0A*Inquiry:* ${payload.subject}%0A*Message:* ${payload.message}`;
+                window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                e.target.reset(); 
+            } catch(err) { alert("Error sending message."); }
+        };
+
+        window.addEventListener('load', () => {
+            // Remove preloader smoothly
+            let tl = gsap.timeline({ onComplete: () => {
+                setTimeout(() => { 
+                    document.getElementById('preloader').style.opacity = '0'; 
+                    setTimeout(() => document.getElementById('preloader').style.display = 'none', 500); 
+                    ScrollTrigger.refresh(); 
+                }, 600);
+            }});
+            
+            tl.to("#p-logo", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" })
+              .to("#p-text", { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" }, "-=0.3");
+
+            // Hero Cinematic Scaling Animation
+            gsap.fromTo(".parallax-hero", 
+                { scale: 1.15 }, 
+                { scale: 1.0, duration: 4.5, ease: "power2.out", delay: 0.3 }
+            );
+
+            // Subtle Fade reveals for header texts
+            gsap.from(".hero-reveal", {
+                opacity: 0,
+                y: 20,
+                duration: 1.2,
+                stagger: 0.25,
+                ease: "power3.out",
+                delay: 0.8
+            });
+
+            // Set minimum date to today
+            const todayStr = new Date().toISOString().split("T")[0];
+            document.getElementById('bookDate').min = todayStr; 
+            
+            // GSAP Scroll Animations
+            gsap.registerPlugin(ScrollTrigger);
+            gsap.utils.toArray('.gs-reveal').forEach(elem => {
+                gsap.fromTo(elem, { autoAlpha: 0, y: 30 }, { duration: 1, autoAlpha: 1, y: 0, scrollTrigger: { trigger: elem, start: "top 85%" } });
+            });
+            gsap.utils.toArray('.gs-slide-left').forEach(elem => {
+                gsap.fromTo(elem, { autoAlpha: 0, x: -50 }, { duration: 1, autoAlpha: 1, x: 0, scrollTrigger: { trigger: elem, start: "top 85%" } });
+            });
+            gsap.utils.toArray('.gs-slide-right').forEach(elem => {
+                gsap.fromTo(elem, { autoAlpha: 0, x: 50 }, { duration: 1, autoAlpha: 1, x: 0, scrollTrigger: { trigger: elem, start: "top 85%" } });
+            });
+            gsap.utils.toArray('.gs-slide-up').forEach(elem => {
+                gsap.fromTo(elem, { autoAlpha: 0, y: 50 }, { duration: 1, autoAlpha: 1, y: 0, scrollTrigger: { trigger: elem, start: "top 85%" } });
+            });
+
+            // Navbar drop-shadow on scroll
+            window.addEventListener('scroll', () => {
+                const nav = document.getElementById('navbar');
+                if (window.scrollY > 50) { 
+                    nav.classList.add('shadow-md'); 
+                    nav.style.padding = "0"; 
+                } else { 
+                    nav.classList.remove('shadow-md'); 
+                    nav.style.padding = "0.5rem 0"; 
+                }
+            });
+        });
+    </script>
+</body>
+</html>
