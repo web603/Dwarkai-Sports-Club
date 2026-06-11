@@ -217,25 +217,25 @@
         </h2>
     </div>
 
-    <!-- Main Navigation -->
-    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-sm border-b border-muted transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-center md:justify-between items-center h-16 md:h-20">
+    <!-- Main Navigation with Glassmorphism and Depth Effects -->
+    <nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50 bg-white/70 backdrop-blur-md rounded-full border border-muted/50 shadow-[0_10px_30px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-300" id="navbar">
+        <div class="flex justify-between items-center h-14 md:h-18 px-4 md:px-8 w-full">
             <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
                 <!-- Replaced rounded-full with rounded-xl for square logo structure -->
-                <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center shadow-md bg-black border-2 border-orange overflow-hidden shrink-0 p-1">
+                <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-md bg-black border-2 border-orange overflow-hidden shrink-0 p-1">
                     <img src="logo.png" alt="Dwarkai Sports" class="w-full h-full object-contain">
                 </div>
                 <!-- Removed 'hidden sm:block' so it shows on mobile, adjusted text sizes for better fit -->
-                <span class="font-black text-lg md:text-2xl text-navy uppercase tracking-wider">Dwarkai Sports</span>
+                <span class="font-black text-base md:text-xl text-navy uppercase tracking-wider">Dwarkai Sports</span>
             </div>
             
-            <div class="hidden md:flex space-x-8 font-semibold text-navy items-center">
-                <a href="#about" class="hover:text-orange transition">About Us</a>
-                <a href="#gallery" class="hover:text-orange transition">Gallery</a>
-                <a href="#booking" class="hover:text-orange transition">Bookings</a>
-                <a href="#academy" class="hover:text-orange transition">Academy</a>
-                <a href="#contact" class="hover:text-orange transition">Contact</a>
-                <a href="#booking" class="px-8 py-3 rounded-full font-bold shadow-lg text-white bg-orange hover:bg-orange/90 transition-colors">
+            <div class="hidden md:flex space-x-6 lg:space-x-8 font-semibold text-navy items-center">
+                <a href="#about" class="hover:text-orange transition text-sm lg:text-base">About Us</a>
+                <a href="#gallery" class="hover:text-orange transition text-sm lg:text-base">Gallery</a>
+                <a href="#booking" class="hover:text-orange transition text-sm lg:text-base">Bookings</a>
+                <a href="#academy" class="hover:text-orange transition text-sm lg:text-base">Academy</a>
+                <a href="#contact" class="hover:text-orange transition text-sm lg:text-base">Contact</a>
+                <a href="#booking" class="px-6 py-2.5 rounded-full font-bold shadow-md text-white bg-orange hover:bg-orange/90 transition-colors text-sm lg:text-base">
                     Book a Slot
                 </a>
             </div>
@@ -1140,11 +1140,11 @@
             window.addEventListener('scroll', () => {
                 const nav = document.getElementById('navbar');
                 if (window.scrollY > 50) { 
-                    nav.classList.add('shadow-md'); 
-                    nav.style.padding = "0"; 
+                    nav.classList.remove('bg-white/70', 'shadow-[0_10px_30px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.02)]', 'top-4'); 
+                    nav.classList.add('bg-white/90', 'shadow-[0_20px_40px_rgba(0,0,0,0.12)]', 'top-2', 'border-muted'); 
                 } else { 
-                    nav.classList.remove('shadow-md'); 
-                    nav.style.padding = "0.5rem 0"; 
+                    nav.classList.remove('bg-white/90', 'shadow-[0_20px_40px_rgba(0,0,0,0.12)]', 'top-2', 'border-muted'); 
+                    nav.classList.add('bg-white/70', 'shadow-[0_10px_30px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.02)]', 'top-4'); 
                 }
             });
         });
