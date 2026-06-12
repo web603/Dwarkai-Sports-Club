@@ -721,19 +721,23 @@
         }
 
         // State classes explicitly defined for dynamic layout selection updates
-        function updateButtonVisuals(btn, isSelected) {
+        function updateButtonVisuals(btn, isSelected, title, time, price) {
             if (isSelected) {
                 btn.className = 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-orange bg-orange text-white transition shadow-md col-span-full sm:col-span-2 min-h-[60px]';
+                btn.innerHTML = `<span class="text-[10px] text-teal mb-1 uppercase tracking-widest font-black">${title}</span> <span class="text-white">${time}</span> <span class="text-white font-black mt-1">₹${price}</span>`;
             } else {
                 btn.className = 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm col-span-full sm:col-span-2 min-h-[60px]';
+                btn.innerHTML = `<span class="text-[10px] text-orange mb-1 uppercase tracking-widest font-black">${title}</span> <span class="text-navy">${time}</span> <span class="text-gray-500 font-black mt-1">₹${price}</span>`;
             }
         }
 
-        function updateHourlyButtonVisuals(btn, isSelected) {
+        function updateHourlyButtonVisuals(btn, isSelected, time) {
             if (isSelected) {
                 btn.className = 'p-2 text-[10px] md:text-xs font-bold rounded-lg border-2 border-orange bg-orange text-white transition shadow-md min-h-[60px] flex flex-col justify-center items-center';
+                btn.innerHTML = `<span class="text-white">${time}</span> <span class="text-white font-black mt-1">₹2500</span>`;
             } else {
                 btn.className = 'p-2 text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm min-h-[60px] flex flex-col justify-center items-center';
+                btn.innerHTML = `<span class="text-navy">${time}</span> <span class="text-gray-500 font-black mt-1">₹2500</span>`;
             }
         }
 
@@ -775,7 +779,7 @@
                     ? 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-gray-200 text-gray-400 cursor-not-allowed line-through col-span-full sm:col-span-2 min-h-[60px]'
                     : 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm col-span-full sm:col-span-2 min-h-[60px]';
                 
-                btn.innerHTML = `<span class="text-[10px] text-orange mb-1 uppercase tracking-widest">${pkg.title}</span> <span>${pkg.time}</span> <span class="text-gray-500 font-black mt-1">₹${pkg.price}</span>`;
+                btn.innerHTML = `<span class="text-[10px] text-orange mb-1 uppercase tracking-widest font-black">${pkg.title}</span> <span class="text-navy">${pkg.time}</span> <span class="text-gray-500 font-black mt-1">₹${pkg.price}</span>`;
                 btn.disabled = pkg.blocked;
                 
                 if (!pkg.blocked) {
@@ -793,10 +797,10 @@
 
                         if (isSelected) {
                             adminSelectedSlots = adminSelectedSlots.filter(s => s.time !== pkg.time);
-                            updateButtonVisuals(btn, false);
+                            updateButtonVisuals(btn, false, pkg.title, pkg.time, pkg.price);
                         } else {
                             adminSelectedSlots.push(pkg);
-                            updateButtonVisuals(btn, true);
+                            updateButtonVisuals(btn, true, pkg.title, pkg.time, pkg.price);
                         }
                         updateAdminPrice();
                     };
@@ -825,10 +829,10 @@
                         const isSelected = adminSelectedSlots.some(s => s.time === timeLabel);
                         if (isSelected) {
                             adminSelectedSlots = adminSelectedSlots.filter(s => s.time !== timeLabel);
-                            updateHourlyButtonVisuals(btn, false);
+                            updateHourlyButtonVisuals(btn, false, timeLabel);
                         } else {
                             adminSelectedSlots.push({time: timeLabel, price: 2500, type: 'hourly'});
-                            updateHourlyButtonVisuals(btn, true);
+                            updateHourlyButtonVisuals(btn, true, timeLabel);
                         }
                         updateAdminPrice();
                     };
