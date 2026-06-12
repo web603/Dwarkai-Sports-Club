@@ -161,6 +161,15 @@
             box-shadow: 0 12px 30px -5px rgba(163, 0, 0, 0.15);
         }
         
+        /* Apple Device Date Field Fixes */
+        input[type="date"] {
+            -webkit-appearance: none;
+            appearance: none;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
         /* Marquee Scrolling CSS */
         .marquee-wrapper {
             overflow: hidden;
@@ -219,7 +228,7 @@
 
     <!-- Main Navigation with Glassmorphism and Depth Effects -->
     <nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50 bg-white/70 backdrop-blur-md rounded-full border border-muted/50 shadow-[0_10px_30px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.02)] transition-all duration-300" id="navbar">
-        <div class="flex justify-between items-center h-14 md:h-18 px-4 md:px-8 w-full">
+        <div class="flex justify-center md:justify-between items-center h-14 md:h-18 px-4 md:px-8 w-full">
             <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
                 <!-- Replaced rounded-full with rounded-xl for square logo structure -->
                 <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-md bg-black border-2 border-orange overflow-hidden shrink-0 p-1">
@@ -391,9 +400,9 @@
                     </div>
 
                     <!-- Date Picker -->
-                    <div class="mb-6 md:mb-10">
+                    <div class="mb-6 md:mb-10 overflow-hidden max-w-full">
                         <label class="block text-navy font-black mb-2 md:mb-3 text-lg md:text-xl"><i class="fa-solid fa-calendar-days text-orange mr-2"></i> Select Date</label>
-                        <input type="date" id="bookDate" class="w-full p-4 md:p-5 rounded-xl border-2 border-muted focus:outline-none focus:border-orange font-bold text-navy text-base md:text-lg bg-white shadow-sm transition" onchange="generateSlots()">
+                        <input type="date" id="bookDate" class="w-full max-w-full box-border p-4 md:p-5 rounded-xl border-2 border-muted focus:outline-none focus:border-orange font-bold text-navy text-base md:text-lg bg-white shadow-sm transition" onchange="generateSlots()">
                     </div>
 
                     <!-- Slots Container -->
@@ -456,7 +465,7 @@
                             </div>
                             <div class="relative mb-4">
                                 <i class="fa-solid fa-phone absolute left-4 top-4 text-gray-400"></i>
-                                <input type="tel" id="bookPhone" placeholder="Phone Number" class="w-full pl-12 p-3 md:p-4 border border-muted rounded-xl focus:outline-none focus:border-orange font-bold transition text-sm md:text-base bg-[#F8F9FA]" required>
+                                <input type="tel" id="bookPhone" placeholder="Phone Number" class="w-full pl-12 p-3 md:p-4 border border-muted rounded-xl focus:outline-none focus:border-orange font-bold transition text-sm md:text-base bg-[#F8F9FA]" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                             </div>
                             <div class="relative mb-6 md:mb-8">
                                 <i class="fa-solid fa-envelope absolute left-4 top-4 text-gray-400"></i>
@@ -478,6 +487,20 @@
             <div class="text-center mb-10 md:mb-16 gs-reveal">
                 <h2 class="text-4xl md:text-5xl font-black mb-3 md:mb-4">Tournaments & Academy</h2>
                 <p class="text-base md:text-xl text-gray-300 font-light">Compete for glory, or learn from certified professionals.</p>
+            </div>
+
+            <!-- LIVE TOURNAMENTS DYNAMIC ROW -->
+            <div class="mb-16 gs-slide-up">
+                <h3 class="text-2xl font-black mb-6 text-teal flex items-center gap-3">
+                    <i class="fa-solid fa-trophy animate-bounce"></i> Active Tournaments
+                </h3>
+                <div id="liveTournamentsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Loaded dynamically from Firebase Firestore -->
+                    <div class="col-span-full text-center py-10 bg-[#111e2f] border border-white/5 rounded-3xl">
+                        <i class="fa-solid fa-circle-notch fa-spin text-teal text-4xl mb-4"></i>
+                        <p class="text-gray-400 font-semibold text-sm">Syncing live tournament rosters...</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Academy Layout -->
@@ -521,10 +544,10 @@
                             <input type="text" id="acName" placeholder="Parent / Guardian Name" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required>
                         </div>
                         <div>
-                            <input type="tel" id="acPhone" placeholder="Phone Number" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required>
+                            <input type="tel" id="acPhone" placeholder="Phone Number" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <input type="number" id="acAge" placeholder="Age (4-16)" min="4" max="16" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required>
+                            <input type="text" id="acAge" placeholder="Age (4-16)" class="w-full bg-[#F8F9FA] border border-muted p-3 rounded-xl text-sm font-bold outline-none focus:border-orange text-navy" required oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                             <input type="text" id="acSport" value="Cricket" readonly class="w-full bg-gray-200 border border-muted p-3 rounded-xl text-sm font-bold outline-none text-navy cursor-not-allowed">
                         </div>
                         <button type="submit" class="w-full text-white py-3 rounded-xl font-black text-base shadow-xl mt-auto bg-orange hover:bg-orange/95">
@@ -663,7 +686,7 @@
                     <form id="contactForm" onsubmit="submitContact(event)" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <input type="text" id="c_name" placeholder="Full Name" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent text-navy" required>
-                            <input type="tel" id="c_phone" placeholder="Phone Number" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent text-navy" required>
+                            <input type="tel" id="c_phone" placeholder="Phone Number" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent text-navy" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
                         </div>
                         <select id="c_subject" class="w-full border-b-2 border-muted py-2 font-bold focus:outline-none focus:border-orange bg-transparent cursor-pointer text-navy">
                             <option>Bulk Booking Inquiry</option>
@@ -784,6 +807,57 @@
             ScrollTrigger.refresh();
         };
 
+        // Real-time rendering of tournaments on the homepage
+        async function fetchLiveTournaments() {
+            const container = document.getElementById('liveTournamentsContainer');
+            if (!container) return;
+            
+            try {
+                const querySnapshot = await getDocs(query(collection(db, "tournaments")));
+                container.innerHTML = '';
+
+                if (querySnapshot.empty) {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-10 bg-[#111e2f] border border-white/5 rounded-3xl">
+                            <i class="fa-solid fa-calendar-xmark text-gray-500 text-4xl mb-3"></i>
+                            <p class="text-gray-400 font-bold text-sm">No live tournaments scheduled right now. Stay tuned!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const tournament = doc.data();
+                    container.innerHTML += `
+                        <div class="bg-[#111e2f] border border-white/10 p-6 rounded-3xl shadow-xl flex flex-col justify-between hover-lift">
+                            <div>
+                                <div class="flex justify-between items-start mb-4">
+                                    <h4 class="font-black text-white text-lg md:text-xl leading-tight">${tournament.name}</h4>
+                                    <span class="bg-orange text-white text-[10px] uppercase font-black tracking-widest px-2.5 py-1 rounded-full shrink-0">Open</span>
+                                </div>
+                                <div class="space-y-2.5 text-sm text-gray-300 font-semibold mb-6">
+                                    <p class="flex items-center gap-2"><i class="fa-solid fa-circle-play text-teal"></i> ${tournament.sport || 'Box Cricket Turf'}</p>
+                                    <p class="flex items-center gap-2"><i class="fa-solid fa-trophy text-yellow-500"></i> Prize Pool: <span class="text-white font-black">${tournament.prize}</span></p>
+                                    <p class="flex items-center gap-2"><i class="fa-solid fa-ticket text-orange"></i> Entry Fee: <span class="text-white font-black">₹${tournament.fee}</span></p>
+                                </div>
+                            </div>
+                            <a href="#contact" class="w-full text-center bg-orange hover:bg-orange/90 text-white font-black py-3 rounded-xl text-sm transition block shadow-md">
+                                Register Team <i class="fa-solid fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                    `;
+                });
+
+            } catch (e) {
+                console.error("Error displaying active tournaments: ", e);
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-red-500 font-bold">
+                        Failed to retrieve live tournaments. Please try again.
+                    </div>
+                `;
+            }
+        }
+
         window.generateSlots = async () => {
             const dateInput = document.getElementById('bookDate').value;
             if (!dateInput) return;
@@ -890,6 +964,9 @@
                         div.classList.add('slot-selected'); 
                     }
                     window.updateSummaryUI();
+                    
+                    // Automatically scroll to the Booking Summary element
+                    document.getElementById('sumSport').scrollIntoView({ behavior: 'smooth', block: 'center' });
                 };
             }
             container.appendChild(div);
@@ -948,6 +1025,14 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating Payment...`; 
             btn.disabled = true;
 
+            const emailInput = document.getElementById('bookEmail').value.trim();
+            if (!emailInput.toLowerCase().endsWith('@gmail.com')) {
+                alert('An email address ending with @gmail.com is compulsory.');
+                btn.innerHTML = orig; 
+                btn.disabled = false;
+                return;
+            }
+
             const combinedTimes = selectedSlotsArray.map(s => s.time).join(', ');
             const totalAmt = selectedSlotsArray.reduce((acc, curr) => acc + curr.price, 0);
             
@@ -960,7 +1045,7 @@
             pendingBookingPayload = { 
                 name: document.getElementById('bookName').value, 
                 phone: document.getElementById('bookPhone').value, 
-                email: document.getElementById('bookEmail').value, 
+                email: emailInput, 
                 sport: currentSport, 
                 date: selectedDate, 
                 timeSlot: combinedTimes, 
@@ -1056,10 +1141,16 @@
 
         window.submitAcademyInquiry = async (e) => {
             e.preventDefault();
+            const ageInputVal = Number(document.getElementById('acAge').value);
+            if (isNaN(ageInputVal) || ageInputVal < 4 || ageInputVal > 16) {
+                alert("Please enter a valid age between 4 and 16.");
+                return;
+            }
+
             const payload = {
                 name: document.getElementById('acName').value,
                 phone: document.getElementById('acPhone').value,
-                age: document.getElementById('acAge').value,
+                age: ageInputVal,
                 sport: "Cricket", 
                 createdAt: serverTimestamp()
             };
@@ -1089,6 +1180,12 @@
         };
 
         window.addEventListener('load', () => {
+            // Force browser to start at the top hero section
+            window.scrollTo({ top: 0, behavior: 'instant' });
+
+            // Fetch live tournaments from the database
+            fetchLiveTournaments();
+
             // Remove preloader smoothly
             let tl = gsap.timeline({ onComplete: () => {
                 setTimeout(() => { 
