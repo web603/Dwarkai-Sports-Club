@@ -711,14 +711,33 @@
             }
         };
 
+        // Wrap around time formatter compatible with frontend
         function formatTime(h) {
-            const ampm = h >= 12 ? 'PM' : 'AM'; 
-            let hr = h % 12; 
+            let wrapped = h % 24;
+            const ampm = wrapped >= 12 ? 'PM' : 'AM'; 
+            let hr = wrapped % 12; 
             if (hr === 0) hr = 12;
             return `${hr < 10 ? '0'+hr : hr}:00 ${ampm}`;
         }
 
-        // --- NEW UPDATED ADMIN SLOT GENERATOR FOR DAY PACKAGES AND HOURLY ---
+        // State classes explicitly defined for dynamic layout selection updates
+        function updateButtonVisuals(btn, isSelected) {
+            if (isSelected) {
+                btn.className = 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-orange bg-orange text-white transition shadow-md col-span-full sm:col-span-2 min-h-[60px]';
+            } else {
+                btn.className = 'p-2 flex flex-col justify-center items-center text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm col-span-full sm:col-span-2 min-h-[60px]';
+            }
+        }
+
+        function updateHourlyButtonVisuals(btn, isSelected) {
+            if (isSelected) {
+                btn.className = 'p-2 text-[10px] md:text-xs font-bold rounded-lg border-2 border-orange bg-orange text-white transition shadow-md min-h-[60px] flex flex-col justify-center items-center';
+            } else {
+                btn.className = 'p-2 text-[10px] md:text-xs font-bold rounded-lg border-2 border-gray-300 bg-white text-navy hover:border-orange transition shadow-sm min-h-[60px] flex flex-col justify-center items-center';
+            }
+        }
+
+        // --- UPDATED ADMIN SLOT GENERATOR FOR DAY PACKAGES AND HOURLY ---
         window.renderAdminSlots = () => {
             const dateVal = document.getElementById('mDate').value;
             const grid = document.getElementById('adminSlotGrid');
@@ -774,14 +793,10 @@
 
                         if (isSelected) {
                             adminSelectedSlots = adminSelectedSlots.filter(s => s.time !== pkg.time);
-                            btn.classList.replace('bg-navy', 'bg-white');
-                            btn.classList.replace('text-white', 'text-navy');
-                            btn.classList.replace('border-navy', 'border-gray-200');
+                            updateButtonVisuals(btn, false);
                         } else {
                             adminSelectedSlots.push(pkg);
-                            btn.classList.replace('bg-white', 'bg-navy');
-                            btn.classList.replace('text-navy', 'text-white');
-                            btn.classList.replace('border-gray-200', 'border-navy');
+                            updateButtonVisuals(btn, true);
                         }
                         updateAdminPrice();
                     };
@@ -789,10 +804,10 @@
                 grid.appendChild(btn);
             });
 
-            // Render Hourly Night Slots
+            // Render Hourly Night Slots (Extended up to 06:00 AM)
             grid.innerHTML += `<div class="col-span-full mt-4 mb-1"><h4 class="font-bold text-navy text-xs uppercase border-b border-gray-200 pb-1">Night Slots (Hourly)</h4></div>`;
 
-            for(let i = 19; i < 24; i++) {
+            for(let i = 19; i < 30; i++) {
                 let timeLabel = `${formatTime(i)} - ${formatTime(i+1)}`;
                 let isBlocked = dateBooks.some(b => b.timeSlot && b.timeSlot.includes(timeLabel));
                 
@@ -810,14 +825,10 @@
                         const isSelected = adminSelectedSlots.some(s => s.time === timeLabel);
                         if (isSelected) {
                             adminSelectedSlots = adminSelectedSlots.filter(s => s.time !== timeLabel);
-                            btn.classList.replace('bg-navy', 'bg-white');
-                            btn.classList.replace('text-white', 'text-navy');
-                            btn.classList.replace('border-navy', 'border-gray-200');
+                            updateHourlyButtonVisuals(btn, false);
                         } else {
                             adminSelectedSlots.push({time: timeLabel, price: 2500, type: 'hourly'});
-                            btn.classList.replace('bg-white', 'bg-navy');
-                            btn.classList.replace('text-navy', 'text-white');
-                            btn.classList.replace('border-gray-200', 'border-navy');
+                            updateHourlyButtonVisuals(btn, true);
                         }
                         updateAdminPrice();
                     };
