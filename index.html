@@ -88,7 +88,7 @@
     <!-- End Google tag -->
 
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght=400;600;700;900&family=Poppins:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- External CSS -->
@@ -996,9 +996,9 @@
                             <label class="text-sm font-bold text-gray-300">Select Coaching Batch *</label>
                             <select id="regTrainingBatch" class="bg-slate-900/50 border border-white/10 rounded-xl p-3 text-sm font-bold outline-none focus:border-teal transition text-white cursor-pointer" required>
                                 <option value="" disabled selected>-- Select Batch --</option>
-                                <option value="Morning Batch">Morning Batch (6:00 AM - 8:00 AM)</option>
-                                <option value="Evening Batch">Evening Batch (4:00 PM - 6:00 PM)</option>
-                                <option value="Weekend Special">Weekend Special (Sat & Sun Matches)</option>
+                                <option value="Morning Batch" data-fee="1500">Morning Batch (6:00 AM - 8:00 AM) - ₹1,500/Month</option>
+                                <option value="Evening Batch" data-fee="1500">Evening Batch (4:00 PM - 6:00 PM) - ₹1,500/Month</option>
+                                <option value="Weekend Special" data-fee="1000">Weekend Special (Sat & Sun Matches) - ₹1,000/Month</option>
                             </select>
                         </div>
                         <!-- Playing Role -->
@@ -1664,6 +1664,75 @@
             }
         };
 
+        // Render intermediate Academy QR payment modal
+        window.showAcademyPaymentModal = (payload, fee) => {
+            const merchantUpiId = "9423150409@ybl";
+            const merchantName = "Dwarkai Sports";
+            const upiString = `upi://pay?pa=${merchantUpiId}&pn=${encodeURIComponent(merchantName)}&am=${fee}&cu=INR&tn=Academy Admission ${encodeURIComponent(payload.playerName)}`;
+            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+
+            const academyModal = document.createElement('div');
+            academyModal.id = "academyPaymentModal";
+            academyModal.className = "fixed inset-0 bg-navy/95 z-[9999] flex justify-center items-center backdrop-blur-sm p-4 safe-pb";
+            academyModal.innerHTML = `
+                <div class="bg-white rounded-3xl p-6 md:p-8 w-[95%] md:max-w-md text-center shadow-2xl relative border-t-8 border-teal flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar text-navy">
+                    <button onclick="document.getElementById('academyPaymentModal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl"><i class="fa-solid fa-times"></i></button>
+                    
+                    <h2 class="text-2xl font-black text-navy mb-2">Registration Payment</h2>
+                    <p class="text-gray-500 font-bold mb-1">Batch: ${payload.trainingBatch}</p>
+                    <p class="text-teal font-black text-3xl mb-4">₹${fee}</p>
+                    
+                    <div class="bg-gray-50 p-4 rounded-xl border border-muted mb-4 text-left">
+                        <p class="text-xs font-bold text-gray-500 mb-1">PLAYER DETAILS</p>
+                        <p class="text-sm font-black text-navy">${payload.playerName}</p>
+                        <p class="text-xs text-gray-500 font-semibold mt-1">Role: ${payload.playingRole} | Level: ${payload.experienceLevel}</p>
+                    </div>
+
+                    <div class="hidden md:block mb-4">
+                        <p class="text-xs font-bold text-navy mb-3 uppercase tracking-widest">Scan to Pay via any UPI App</p>
+                        <img src="${qrCodeUrl}" alt="UPI QR Code" class="mx-auto border-4 border-muted rounded-xl shadow-sm w-48 h-48">
+                    </div>
+                    
+                    <div class="block md:hidden mb-4">
+                        <a href="${upiString}" class="block w-full bg-navy text-white py-4 rounded-xl font-black text-base hover:bg-teal transition shadow-xl flex justify-center items-center gap-3">
+                            <i class="fa-solid fa-mobile-screen"></i> Pay via UPI App
+                        </a>
+                    </div>
+
+                    <div class="text-xs text-orange font-bold mb-4 bg-orange/5 p-3 rounded-lg border border-orange/10">
+                        <i class="fa-solid fa-info-circle"></i> Once completed, click the button below to confirm details and share your receipt on WhatsApp.
+                    </div>
+                    
+                    <button id="academyConfirmBtn" class="w-full bg-[#25D366] text-white py-4 rounded-xl font-black text-lg hover:bg-[#1ebe5d] transition shadow-xl flex justify-center items-center gap-3">
+                        Next Step: Send to WhatsApp <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(academyModal);
+
+            document.getElementById('academyConfirmBtn').onclick = async () => {
+                const btn = document.getElementById('academyConfirmBtn');
+                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting...`;
+                btn.disabled = true;
+
+                try {
+                    payload.feeAmount = fee;
+                    await addDoc(collection(db, "academy_inquiries"), payload);
+                    
+                    const waMsg = `*Academy Player Registration* 🎓%0A%0A*Player Name:* ${payload.playerName}%0A*DOB:* ${payload.playerDOB}%0A*Guardian Name:* ${payload.guardianName}%0A*Phone:* ${payload.phone}%0A*Email:* ${payload.email}%0A*Batch:* ${payload.trainingBatch}%0A*Role:* ${payload.playingRole}%0A*Experience:* ${payload.experienceLevel}%0A*Fee Payment:* ₹${fee}%0A*Notes:* ${payload.specialInstructions}%0A%0A[Please attach your admission payment screenshot here]`;
+                    
+                    window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                    
+                    document.getElementById('academyPaymentModal').remove();
+                    document.getElementById('academy').querySelector('form').reset();
+                } catch(err) {
+                    alert("Error processing registration details. Please try again.");
+                    btn.innerHTML = `Next Step: Send to WhatsApp <i class="fa-solid fa-arrow-right"></i>`;
+                    btn.disabled = false;
+                }
+            };
+        };
+
         // Complete detailed registration form handler for Academy
         window.submitDetailedAcademyRegistration = async (e) => {
             e.preventDefault();
@@ -1687,16 +1756,11 @@
                 createdAt: serverTimestamp()
             };
 
-            try {
-                await addDoc(collection(db, "academy_inquiries"), payload);
-                
-                const waMsg = `*Academy Player Registration* 🎓%0A%0A*Player Name:* ${payload.playerName}%0A*DOB:* ${payload.playerDOB}%0A*Guardian Name:* ${payload.guardianName}%0A*Phone:* ${payload.phone}%0A*Email:* ${payload.email}%0A*Batch:* ${payload.trainingBatch}%0A*Role:* ${payload.playingRole}%0A*Experience:* ${payload.experienceLevel}%0A*Notes:* ${payload.specialInstructions}`;
-                
-                window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
-                e.target.reset();
-            } catch(err) { 
-                alert("Error sending your registration. Please try again."); 
-            }
+            const batchSelect = document.getElementById('regTrainingBatch');
+            const selectedOption = batchSelect.options[batchSelect.selectedIndex];
+            const fee = selectedOption.getAttribute('data-fee') || '1500';
+
+            window.showAcademyPaymentModal(payload, fee);
         };
 
         window.submitContact = async (e) => {
