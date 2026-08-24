@@ -996,9 +996,9 @@
                             <label class="text-sm font-bold text-gray-300">Select Coaching Batch *</label>
                             <select id="regTrainingBatch" class="bg-slate-900/50 border border-white/10 rounded-xl p-3 text-sm font-bold outline-none focus:border-teal transition text-white cursor-pointer" required>
                                 <option value="" disabled selected>-- Select Batch --</option>
-                                <option value="Morning Batch" data-fee="1500">Morning Batch (6:00 AM - 8:00 AM) - ₹1,500/Month</option>
-                                <option value="Evening Batch" data-fee="1500">Evening Batch (4:00 PM - 6:00 PM) - ₹1,500/Month</option>
-                                <option value="Weekend Special" data-fee="1000">Weekend Special (Sat & Sun Matches) - ₹1,000/Month</option>
+                                <option value="Morning Batch">Morning Batch (6:00 AM - 8:00 AM)</option>
+                                <option value="Evening Batch">Evening Batch (4:00 PM - 6:00 PM)</option>
+                                <option value="Weekend Special">Weekend Special (Sat & Sun Matches)</option>
                             </select>
                         </div>
                         <!-- Playing Role -->
@@ -1117,7 +1117,7 @@
                                 <div class="text-[10px] text-teal"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i></div>
                             </div>
                         </div>
-                        <p class="text-gray-600 text-sm font-medium leading-relaxed">"Ground quality is amazing. Very easy booking process online and the staff is super cooperative in Jalgaon. Will visit again."</p>
+                        <p class="text-gray-600 text-sm font-medium text-navy font-medium leading-relaxed">"Ground quality is amazing. Very easy booking process online and the staff is super cooperative in Jalgaon. Will visit again."</p>
                     </div>
                     <div class="w-[300px] md:w-[350px] bg-white p-6 rounded-3xl shadow-xl border-t-8 border-teal flex flex-col hover-lift h-[230px] shrink-0">
                         <div class="flex items-center gap-4 mb-4">
@@ -1351,6 +1351,7 @@
 
                 querySnapshot.forEach((doc) => {
                     const tournament = doc.data();
+                    const tNameEscaped = tournament.name.replace(/'/g, "\\'");
                     container.innerHTML += `
                         <div class="bg-[#111e2f] border border-white/10 p-6 rounded-3xl shadow-xl flex flex-col justify-between hover-lift">
                             <div>
@@ -1364,9 +1365,9 @@
                                     <p class="flex items-center gap-2"><i class="fa-solid fa-ticket text-orange"></i> Entry Fee: <span class="text-white font-black">₹${tournament.fee}</span></p>
                                 </div>
                             </div>
-                            <a href="#contact" class="w-full text-center bg-orange hover:bg-orange/90 text-white font-black py-3 rounded-xl text-sm transition block shadow-md">
+                            <button onclick="window.openTournamentRegistrationModal('${tNameEscaped}', '${tournament.fee || '1000'}')" class="w-full text-center bg-orange hover:bg-orange/90 text-white font-black py-3 rounded-xl text-sm transition block shadow-md">
                                 Register Team <i class="fa-solid fa-arrow-right ml-1"></i>
-                            </a>
+                            </button>
                         </div>
                     `;
                 });
@@ -1380,6 +1381,120 @@
                 `;
             }
         }
+
+        // Render dedicated team registration modal and step UPI payment flow
+        window.openTournamentRegistrationModal = (name, fee) => {
+            const modal = document.createElement('div');
+            modal.id = "tournamentRegModal";
+            modal.className = "fixed inset-0 bg-navy/95 z-[9999] flex justify-center items-center backdrop-blur-sm p-4 safe-pb";
+            
+            modal.innerHTML = `
+                <div id="tournamentRegContent" class="bg-white rounded-3xl p-6 md:p-8 w-[95%] md:max-w-md text-center shadow-2xl relative border-t-8 border-orange flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar text-navy">
+                    <button onclick="document.getElementById('tournamentRegModal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl"><i class="fa-solid fa-times"></i></button>
+                    
+                    <h2 class="text-2xl font-black text-navy mb-2">Register Your Team</h2>
+                    <p class="text-gray-500 font-bold mb-4">${name}</p>
+                    <p class="text-orange font-black text-xl mb-6">Entry Fee: ₹${fee}</p>
+                    
+                    <form id="tRegForm" class="space-y-4 text-left">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-bold text-gray-500">Captain / Representative Name *</label>
+                            <input type="text" id="tRegName" placeholder="Full Name" class="w-full p-3 rounded-xl border border-muted focus:outline-none focus:border-orange font-bold text-sm bg-[#F8F9FA]" required>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-bold text-gray-500">Contact Number *</label>
+                            <input type="tel" id="tRegPhone" placeholder="10-Digit Mobile Number" class="w-full p-3 rounded-xl border border-muted focus:outline-none focus:border-orange font-bold text-sm bg-[#F8F9FA]" required oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-bold text-gray-500">Email Address *</label>
+                            <input type="email" id="tRegEmail" placeholder="example@gmail.com" class="w-full p-3 rounded-xl border border-muted focus:outline-none focus:border-orange font-bold text-sm bg-[#F8F9FA]" required>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-orange text-white py-3.5 rounded-xl font-black text-base hover:bg-orange/95 transition shadow-lg flex justify-center items-center gap-2 mt-6">
+                            Proceed to Payment <i class="fa-solid fa-credit-card"></i>
+                        </button>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('tRegForm').onsubmit = (e) => {
+                e.preventDefault();
+                
+                const captainName = document.getElementById('tRegName').value.trim();
+                const phone = document.getElementById('tRegPhone').value.trim();
+                const email = document.getElementById('tRegEmail').value.trim();
+
+                if (!email.toLowerCase().endsWith('@gmail.com')) {
+                    alert('A valid @gmail.com address is required.');
+                    return;
+                }
+
+                // Transition to dynamic payment QR details inside the modal container
+                const content = document.getElementById('tournamentRegContent');
+                const parsedFee = parseInt(fee.toString().replace(/[^0-9]/g, '')) || 1000;
+                
+                const merchantUpiId = "9423150409@ybl";
+                const merchantName = "Dwarkai Sports";
+                const upiString = `upi://pay?pa=${merchantUpiId}&pn=${encodeURIComponent(merchantName)}&am=${parsedFee}&cu=INR&tn=Tournament ${encodeURIComponent(name.slice(0,15))}`;
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+
+                content.innerHTML = `
+                    <button onclick="document.getElementById('tournamentRegModal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl"><i class="fa-solid fa-times"></i></button>
+                    
+                    <h2 class="text-2xl font-black text-navy mb-1">Complete Payment</h2>
+                    <p class="text-gray-500 font-bold mb-4">${name}</p>
+                    <p class="text-orange font-black text-3xl mb-6">₹${parsedFee}</p>
+                    
+                    <div class="hidden md:block mb-4">
+                        <p class="text-xs font-bold text-navy mb-3 uppercase tracking-widest">Scan to Pay via any UPI App</p>
+                        <img src="${qrCodeUrl}" alt="UPI QR Code" class="mx-auto border-4 border-muted rounded-xl shadow-sm w-44 h-48">
+                    </div>
+                    
+                    <div class="block md:hidden mb-4">
+                        <a href="${upiString}" class="block w-full bg-navy text-white py-4 rounded-xl font-black text-base hover:bg-orange transition shadow-xl flex justify-center items-center gap-3">
+                            <i class="fa-solid fa-mobile-screen"></i> Pay via UPI App
+                        </a>
+                    </div>
+
+                    <div class="text-xs text-orange font-bold mb-6 bg-orange/5 p-3 rounded-lg border border-orange/10">
+                        <i class="fa-solid fa-info-circle"></i> Once paid, click the button below to confirm registration and share your payment screenshot on WhatsApp.
+                    </div>
+                    
+                    <button id="confirmTRegBtn" class="w-full bg-[#25D366] text-white py-4 rounded-xl font-black text-lg hover:bg-[#1ebe5d] transition shadow-xl flex justify-center items-center gap-3">
+                        Send to WhatsApp <i class="fa-brands fa-whatsapp text-xl"></i>
+                    </button>
+                `;
+
+                document.getElementById('confirmTRegBtn').onclick = async () => {
+                    const btn = document.getElementById('confirmTRegBtn');
+                    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Registering...`;
+                    btn.disabled = true;
+
+                    const payload = {
+                        tournamentName: name,
+                        feeAmount: parsedFee,
+                        captainName: captainName,
+                        phone: phone,
+                        email: email,
+                        createdAt: serverTimestamp()
+                    };
+
+                    try {
+                        await addDoc(collection(db, "tournament_registrations"), payload);
+                        
+                        const waMsg = `*Tournament Registration* 🏆%0A%0A*Tournament:* ${name}%0A*Captain:* ${captainName}%0A*Phone:* ${phone}%0A*Email:* ${email}%0A*Entry Fee:* ₹${parsedFee}%0A%0A[Please attach your entry fee payment receipt screenshot here]`;
+                        
+                        window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                        document.getElementById('tournamentRegModal').remove();
+                    } catch(err) {
+                        alert("Error finalizing registration. Please try again.");
+                        btn.innerHTML = `Send to WhatsApp <i class="fa-brands fa-whatsapp text-xl"></i>`;
+                        btn.disabled = false;
+                    }
+                };
+            };
+        };
 
         window.generateSlots = async () => {
             const dateInput = document.getElementById('bookDate').value;
@@ -1401,7 +1516,6 @@
             `;
 
             try {
-                // Fetch bookings for the selected date and specific booking type (Ground / Net)
                 const q = query(
                     collection(db, "bookings"), 
                     where("date", "==", selectedDate),
@@ -1413,32 +1527,26 @@
 
                 container.innerHTML = ''; 
 
-                // Checking Day Package Conflicts (Only applies to Ground Booking)
                 let isFullBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 6:00 PM"));
                 let isMornBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 12:00 PM"));
                 let isEveBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("1:00 PM - 6:00 PM"));
 
-                // ==== DAY PACKAGES (Only visible for Ground Booking) ====
                 if (currentBookingType === 'Ground') {
                     const dayHeader = document.createElement('div');
                     dayHeader.className = "col-span-full mt-2 mb-2";
                     dayHeader.innerHTML = `<h4 class="font-black text-navy text-lg border-b-2 border-orange inline-block pb-1">Day Packages</h4>`;
                     container.appendChild(dayHeader);
 
-                    // 1. Full Day (7am-6pm)
                     let fullBlocked = isFullBooked || isMornBooked || isEveBooked;
                     createSlotCard("7:00 AM - 6:00 PM", 8000, container, fullBlocked, "full", "Full Day");
 
-                    // 2. Half Day Morning (7am-12pm)
                     let mornBlocked = isFullBooked || isMornBooked;
                     createSlotCard("7:00 AM - 12:00 PM", 4000, container, mornBlocked, "half_morn", "Half Day (Morning)");
 
-                    // 3. Half Day Evening (1pm-6pm)
                     let eveBlocked = isFullBooked || isEveBooked;
                     createSlotCard("1:00 PM - 6:00 PM", 4000, container, eveBlocked, "half_eve", "Half Day (Evening)");
                 }
 
-                // ==== NIGHT/HOURLY SLOTS ====
                 const hourlyHeader = document.createElement('div');
                 hourlyHeader.className = "col-span-full mt-6 mb-2";
                 hourlyHeader.innerHTML = `<h4 class="font-black text-navy text-lg border-b-2 border-orange inline-block pb-1">${currentBookingType === 'Ground' ? 'Night Slots (Hourly)' : 'Hourly Practice Slots'}</h4>`;
@@ -1664,76 +1772,7 @@
             }
         };
 
-        // Render intermediate Academy QR payment modal
-        window.showAcademyPaymentModal = (payload, fee) => {
-            const merchantUpiId = "9423150409@ybl";
-            const merchantName = "Dwarkai Sports";
-            const upiString = `upi://pay?pa=${merchantUpiId}&pn=${encodeURIComponent(merchantName)}&am=${fee}&cu=INR&tn=Academy Admission ${encodeURIComponent(payload.playerName)}`;
-            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-
-            const academyModal = document.createElement('div');
-            academyModal.id = "academyPaymentModal";
-            academyModal.className = "fixed inset-0 bg-navy/95 z-[9999] flex justify-center items-center backdrop-blur-sm p-4 safe-pb";
-            academyModal.innerHTML = `
-                <div class="bg-white rounded-3xl p-6 md:p-8 w-[95%] md:max-w-md text-center shadow-2xl relative border-t-8 border-teal flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar text-navy">
-                    <button onclick="document.getElementById('academyPaymentModal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl"><i class="fa-solid fa-times"></i></button>
-                    
-                    <h2 class="text-2xl font-black text-navy mb-2">Registration Payment</h2>
-                    <p class="text-gray-500 font-bold mb-1">Batch: ${payload.trainingBatch}</p>
-                    <p class="text-teal font-black text-3xl mb-4">₹${fee}</p>
-                    
-                    <div class="bg-gray-50 p-4 rounded-xl border border-muted mb-4 text-left">
-                        <p class="text-xs font-bold text-gray-500 mb-1">PLAYER DETAILS</p>
-                        <p class="text-sm font-black text-navy">${payload.playerName}</p>
-                        <p class="text-xs text-gray-500 font-semibold mt-1">Role: ${payload.playingRole} | Level: ${payload.experienceLevel}</p>
-                    </div>
-
-                    <div class="hidden md:block mb-4">
-                        <p class="text-xs font-bold text-navy mb-3 uppercase tracking-widest">Scan to Pay via any UPI App</p>
-                        <img src="${qrCodeUrl}" alt="UPI QR Code" class="mx-auto border-4 border-muted rounded-xl shadow-sm w-48 h-48">
-                    </div>
-                    
-                    <div class="block md:hidden mb-4">
-                        <a href="${upiString}" class="block w-full bg-navy text-white py-4 rounded-xl font-black text-base hover:bg-teal transition shadow-xl flex justify-center items-center gap-3">
-                            <i class="fa-solid fa-mobile-screen"></i> Pay via UPI App
-                        </a>
-                    </div>
-
-                    <div class="text-xs text-orange font-bold mb-4 bg-orange/5 p-3 rounded-lg border border-orange/10">
-                        <i class="fa-solid fa-info-circle"></i> Once completed, click the button below to confirm details and share your receipt on WhatsApp.
-                    </div>
-                    
-                    <button id="academyConfirmBtn" class="w-full bg-[#25D366] text-white py-4 rounded-xl font-black text-lg hover:bg-[#1ebe5d] transition shadow-xl flex justify-center items-center gap-3">
-                        Next Step: Send to WhatsApp <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(academyModal);
-
-            document.getElementById('academyConfirmBtn').onclick = async () => {
-                const btn = document.getElementById('academyConfirmBtn');
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting...`;
-                btn.disabled = true;
-
-                try {
-                    payload.feeAmount = fee;
-                    await addDoc(collection(db, "academy_inquiries"), payload);
-                    
-                    const waMsg = `*Academy Player Registration* 🎓%0A%0A*Player Name:* ${payload.playerName}%0A*DOB:* ${payload.playerDOB}%0A*Guardian Name:* ${payload.guardianName}%0A*Phone:* ${payload.phone}%0A*Email:* ${payload.email}%0A*Batch:* ${payload.trainingBatch}%0A*Role:* ${payload.playingRole}%0A*Experience:* ${payload.experienceLevel}%0A*Fee Payment:* ₹${fee}%0A*Notes:* ${payload.specialInstructions}%0A%0A[Please attach your admission payment screenshot here]`;
-                    
-                    window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
-                    
-                    document.getElementById('academyPaymentModal').remove();
-                    document.getElementById('academy').querySelector('form').reset();
-                } catch(err) {
-                    alert("Error processing registration details. Please try again.");
-                    btn.innerHTML = `Next Step: Send to WhatsApp <i class="fa-solid fa-arrow-right"></i>`;
-                    btn.disabled = false;
-                }
-            };
-        };
-
-        // Complete detailed registration form handler for Academy
+        // Complete detailed registration form handler for Academy (Direct submit & bypass payment)
         window.submitDetailedAcademyRegistration = async (e) => {
             e.preventDefault();
             
@@ -1756,84 +1795,17 @@
                 createdAt: serverTimestamp()
             };
 
-            const batchSelect = document.getElementById('regTrainingBatch');
-            const selectedOption = batchSelect.options[batchSelect.selectedIndex];
-            const fee = selectedOption.getAttribute('data-fee') || '1500';
-
-            window.showAcademyPaymentModal(payload, fee);
+            try {
+                await addDoc(collection(db, "academy_inquiries"), payload);
+                const waMsg = `*Academy Player Registration* 🎓%0A%0A*Player Name:* ${payload.playerName}%0A*DOB:* ${payload.playerDOB}%0A*Guardian Name:* ${payload.guardianName}%0A*Phone:* ${payload.phone}%0A*Email:* ${payload.email}%0A*Batch:* ${payload.trainingBatch}%0A*Role:* ${payload.playingRole}%0A*Experience:* ${payload.experienceLevel}%0A*Notes:* ${payload.specialInstructions}`;
+                window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                e.target.reset();
+            } catch(err) { 
+                alert("Error sending your registration. Please try again."); 
+            }
         };
 
-        // Render intermediate Tournament payment modal for general inquiries
-        window.showTournamentPaymentModal = (payload) => {
-            const merchantUpiId = "9423150409@ybl";
-            const merchantName = "Dwarkai Sports";
-            const fee = 1000; // Standard general tournament entry deposit fee structure
-            const upiString = `upi://pay?pa=${merchantUpiId}&pn=${encodeURIComponent(merchantName)}&am=${fee}&cu=INR&tn=Tournament Entry ${encodeURIComponent(payload.name)}`;
-            const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
-
-            const tournamentModal = document.createElement('div');
-            tournamentModal.id = "tournamentPaymentModal";
-            tournamentModal.className = "fixed inset-0 bg-navy/95 z-[9999] flex justify-center items-center backdrop-blur-sm p-4 safe-pb";
-            tournamentModal.innerHTML = `
-                <div class="bg-white rounded-3xl p-6 md:p-8 w-[95%] md:max-w-md text-center shadow-2xl relative border-t-8 border-orange flex flex-col max-h-[90vh] overflow-y-auto custom-scrollbar text-navy">
-                    <button onclick="document.getElementById('tournamentPaymentModal').remove()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl"><i class="fa-solid fa-times"></i></button>
-                    
-                    <h2 class="text-2xl font-black text-navy mb-2">Tournament Entry Fee</h2>
-                    <p class="text-gray-500 font-bold mb-1">Inquiry Category: ${payload.subject}</p>
-                    <p class="text-orange font-black text-3xl mb-4">₹${fee}</p>
-                    
-                    <div class="bg-gray-50 p-4 rounded-xl border border-muted mb-4 text-left">
-                        <p class="text-xs font-bold text-gray-500 mb-1">REGISTRATION DETAILS</p>
-                        <p class="text-sm font-black text-navy">${payload.name}</p>
-                        <p class="text-xs text-gray-500 font-semibold mt-1">Phone: ${payload.phone}</p>
-                        <p class="text-xs text-gray-600 italic mt-1 font-medium">"${payload.message}"</p>
-                    </div>
-
-                    <div class="hidden md:block mb-4">
-                        <p class="text-xs font-bold text-navy mb-3 uppercase tracking-widest">Scan to Pay via any UPI App</p>
-                        <img src="${qrCodeUrl}" alt="UPI QR Code" class="mx-auto border-4 border-muted rounded-xl shadow-sm w-48 h-48">
-                    </div>
-                    
-                    <div class="block md:hidden mb-4">
-                        <a href="${upiString}" class="block w-full bg-navy text-white py-4 rounded-xl font-black text-base hover:bg-orange transition shadow-xl flex justify-center items-center gap-3">
-                            <i class="fa-solid fa-mobile-screen"></i> Pay via UPI App
-                        </a>
-                    </div>
-
-                    <div class="text-xs text-orange font-bold mb-4 bg-orange/5 p-3 rounded-lg border border-orange/10">
-                        <i class="fa-solid fa-info-circle"></i> Once finished, click the button below to secure your details and share the payment confirmation on WhatsApp.
-                    </div>
-                    
-                    <button id="tournamentConfirmBtn" class="w-full bg-[#25D366] text-white py-4 rounded-xl font-black text-lg hover:bg-[#1ebe5d] transition shadow-xl flex justify-center items-center gap-3">
-                        Next Step: Send to WhatsApp <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(tournamentModal);
-
-            document.getElementById('tournamentConfirmBtn').onclick = async () => {
-                const btn = document.getElementById('tournamentConfirmBtn');
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting...`;
-                btn.disabled = true;
-
-                try {
-                    payload.feeAmount = fee;
-                    await addDoc(collection(db, "contact_inquiries"), payload);
-                    
-                    const waMsg = `Hello Dwarkai Sports!%0A%0A*Name:* ${payload.name}%0A*Phone:* ${payload.phone}%0A*Inquiry:* ${payload.subject}%0A*Message:* ${payload.message}%0A*Fee Payment:* ₹${fee}%0A%0A[Please attach your tournament payment receipt screenshot here]`;
-                    
-                    window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
-                    
-                    document.getElementById('tournamentPaymentModal').remove();
-                    document.getElementById('contactForm').reset();
-                } catch(err) {
-                    alert("Error processing tournament submission. Please try again.");
-                    btn.innerHTML = `Next Step: Send to WhatsApp <i class="fa-solid fa-arrow-right"></i>`;
-                    btn.disabled = false;
-                }
-            };
-        };
-
+        // Direct inquiry form submit handler (Bypass intermediate payments)
         window.submitContact = async (e) => {
             e.preventDefault();
             const payload = {
@@ -1843,25 +1815,20 @@
                 message: document.getElementById('c_message').value,
                 createdAt: serverTimestamp()
             };
-
-            if (payload.subject === "Tournament Entry") {
-                window.showTournamentPaymentModal(payload);
-            } else {
-                const btn = document.getElementById('contactBtn');
-                const orig = btn.innerHTML;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending...`;
-                btn.disabled = true;
-                try {
-                    await addDoc(collection(db, "contact_inquiries"), payload);
-                    const waMsg = `Hello Dwarkai Sports!%0A%0A*Name:* ${payload.name}%0A*Phone:* ${payload.phone}%0A*Inquiry:* ${payload.subject}%0A*Message:* ${payload.message}`;
-                    window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
-                    e.target.reset(); 
-                } catch(err) { 
-                    alert("Error sending message."); 
-                } finally {
-                    btn.innerHTML = orig;
-                    btn.disabled = false;
-                }
+            const btn = document.getElementById('contactBtn');
+            const orig = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Sending...`;
+            btn.disabled = true;
+            try {
+                await addDoc(collection(db, "contact_inquiries"), payload);
+                const waMsg = `Hello Dwarkai Sports!%0A%0A*Name:* ${payload.name}%0A*Phone:* ${payload.phone}%0A*Inquiry:* ${payload.subject}%0A*Message:* ${payload.message}`;
+                window.open(`https://wa.me/919423150409?text=${waMsg}`, '_blank');
+                e.target.reset(); 
+            } catch(err) { 
+                alert("Error sending message."); 
+            } finally {
+                btn.innerHTML = orig;
+                btn.disabled = false;
             }
         };
 
