@@ -1251,6 +1251,11 @@
         </div>
     </footer>
 
+    <!-- Floating Instagram Button -->
+    <a href="https://www.instagram.com/dwarkai_sports_club" target="_blank" rel="noopener noreferrer" class="fixed bottom-24 md:bottom-8 right-6 z-[999] flex items-center justify-center w-14 h-14 bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 text-white rounded-full shadow-[0_8px_20px_rgba(219,39,119,0.3)] hover:scale-110 hover:shadow-[0_12px_24px_rgba(219,39,119,0.5)] active:scale-95 transition-all duration-300 group" aria-label="Instagram">
+        <i class="fa-brands fa-instagram text-2xl group-hover:rotate-6 transition-transform duration-300"></i>
+    </a>
+
     <!-- Firebase SDK Logic & Integrations -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -1522,6 +1527,7 @@
             `;
 
             try {
+                // Fetch bookings for the selected date and specific booking type (Ground / Net)
                 const q = query(
                     collection(db, "bookings"), 
                     where("date", "==", selectedDate),
@@ -1533,26 +1539,32 @@
 
                 container.innerHTML = ''; 
 
+                // Checking Day Package Conflicts (Only applies to Ground Booking)
                 let isFullBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 6:00 PM"));
                 let isMornBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("7:00 AM - 12:00 PM"));
                 let isEveBooked = blocks.some(b => b.timeSlot && b.timeSlot.includes("1:00 PM - 6:00 PM"));
 
+                // ==== DAY PACKAGES (Only visible for Ground Booking) ====
                 if (currentBookingType === 'Ground') {
                     const dayHeader = document.createElement('div');
                     dayHeader.className = "col-span-full mt-2 mb-2";
                     dayHeader.innerHTML = `<h4 class="font-black text-navy text-lg border-b-2 border-orange inline-block pb-1">Day Packages</h4>`;
                     container.appendChild(dayHeader);
 
+                    // 1. Full Day (7am-6pm)
                     let fullBlocked = isFullBooked || isMornBooked || isEveBooked;
                     createSlotCard("7:00 AM - 6:00 PM", 8000, container, fullBlocked, "full", "Full Day");
 
+                    // 2. Half Day Morning (7am-12pm)
                     let mornBlocked = isFullBooked || isMornBooked;
                     createSlotCard("7:00 AM - 12:00 PM", 4000, container, mornBlocked, "half_morn", "Half Day (Morning)");
 
+                    // 3. Half Day Evening (1pm-6pm)
                     let eveBlocked = isFullBooked || isEveBooked;
                     createSlotCard("1:00 PM - 6:00 PM", 4000, container, eveBlocked, "half_eve", "Half Day (Evening)");
                 }
 
+                // ==== NIGHT/HOURLY SLOTS ====
                 const hourlyHeader = document.createElement('div');
                 hourlyHeader.className = "col-span-full mt-6 mb-2";
                 hourlyHeader.innerHTML = `<h4 class="font-black text-navy text-lg border-b-2 border-orange inline-block pb-1">${currentBookingType === 'Ground' ? 'Night Slots (Hourly)' : 'Hourly Practice Slots'}</h4>`;
